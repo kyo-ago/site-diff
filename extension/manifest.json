@@ -1,0 +1,14 @@
+{
+    "name": "Chrome autopilot tool",
+    "version": "0.0.1",
+    "manifest_version": 2,
+    "browser_action": {
+        "default_popup": "html/browser_action.html"
+    },
+    "permissions": [
+        "tabs",
+        "storage",
+        "unlimitedStorage",
+        "<all_urls>"
+    ]
+}
