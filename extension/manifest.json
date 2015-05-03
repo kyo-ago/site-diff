@@ -1,5 +1,5 @@
 {
-    "name": "Chrome autopilot tool",
+    "name": "site-diff",
     "version": "0.0.1",
     "manifest_version": 2,
     "browser_action": {

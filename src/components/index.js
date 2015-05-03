@@ -1,36 +1,31 @@
-import Loading from './Loading';
-import ResultImage from './ResultImage';
+import InputURL from './InputURL';
+import ResultImages from './ResultImages';
 
 export default class _ extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            'src': undefined
+            'imageDataURLs': []
         };
     }
     componentDidMount() {
         let { context } = this.props;
-        context.store.firstCapture.onChange(() => {
+        context.store.renderingImages.onChange(() => {
             this.setState({
-                'src': context.store.firstCapture.getSrc()
-            })
-        });
-        context.store.diffCapture.onChange(() => {
-            this.setState({
-                'src': context.store.diffCapture.getSrc()
+                'imageDataURLs': context.store.renderingImages.getImageDataURLs()
             })
         });
     }
     componentWillUnmount() {
         let { context } = this.props;
-        context.store.firstCapture.removeAllChangeListeners();
-        context.store.diffCapture.removeAllChangeListeners();
+        context.store.renderingImages.removeAllChangeListeners();
     }
     render() {
-    	if (this.state.src) {
-    		return <ResultImage src={this.state.src} />;
+        let { context } = this.props;
+    	if (this.state.imageDataURLs.length) {
+    		return <ResultImages context={context} />;
     	} else {
-    		return <Loading context={this.props.context} />;
+    		return <InputURL context={context} />;
     	}
     }
 }

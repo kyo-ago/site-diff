@@ -1,5 +1,5 @@
 {
-  "name": "chrome-autopilot-tool",
+  "name": "site-diff",
   "version": "0.0.0",
   "author": "@kyo_ago",
   "browserify": {
@@ -15,9 +15,10 @@
   "dependencies": {
     "babel-core": "^5.1.13",
     "bluebird": "^2.9.24",
-    "material-flux": "^1.2.0",
-    "react": "^0.13.2",
     "chrome-tab-captureVisibleTab-full": "git+https://github.com/kyo-ago/chrome-tab-captureVisibleTab-full.git",
+    "material-flux": "^1.2.0",
+    "monapt": "^0.3.8",
+    "react": "^0.13.2",
     "resemblejs": "git+https://github.com/kyo-ago/Resemble.js.git"
   },
   "devDependencies": {

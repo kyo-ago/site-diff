@@ -1,6 +1,5 @@
 import Actions from './Actions';
-import FirstCaptureStores from './stores/FirstCapture';
-import DiffCaptureStores from './stores/DiffCapture';
+import RenderingImages from './stores/RenderingImages';
 import {Context} from 'material-flux';
 
 export default class _ extends Context {
@@ -8,8 +7,7 @@ export default class _ extends Context {
         super();
         this.actions = new Actions(this);
         this.store = {
-        	'firstCapture': new FirstCaptureStores(this),
-        	'diffCapture': new DiffCaptureStores(this),
+        	'renderingImages': new RenderingImages(this),
         };
     }
 }
