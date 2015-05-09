@@ -5,28 +5,74 @@ var _this = this;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-require('babel-core/polyfill');
+require('./base');
 
-var _Promise = require('bluebird');
+var _TabsModel$StorageModel = require('chrome-extension-api-promise');
 
-var _Promise2 = _interopRequireDefault(_Promise);
+var _CaptureService = require('./models/Domain/Capture/Service');
 
-var _monapt = require('monapt');
+var _CaptureService2 = _interopRequireDefault(_CaptureService);
 
-var _monapt2 = _interopRequireDefault(_monapt);
+var _ResultsService = require('./models/Domain/Results/Service');
 
-var _CaptureVisibleTab = require('./models/Capture/Service');
+var _ResultsService2 = _interopRequireDefault(_ResultsService);
 
-var _CaptureVisibleTab2 = _interopRequireDefault(_CaptureVisibleTab);
-
-var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
-global.Promise = _Promise2['default'];
-global.monapt = _monapt2['default'];
-
-chrome.runtime.onMessage.addListener(function callee$0$0(_ref) {
-    var type = _ref.type;
+var execCapture = function execCapture(_ref) {
+    var tabsModel = _ref.tabsModel;
     var urls = _ref.urls;
-    var capture, tab, captureModels, url;
+    var capture, tab, captureModels;
+    return regeneratorRuntime.async(function execCapture$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+            case 0:
+                capture = new CaptureVisibleTab({ 'tabs': tabsModel });
+                context$1$0.next = 3;
+                return tabsModel.createActive();
+
+            case 3:
+                tab = context$1$0.sent;
+                context$1$0.next = 6;
+                return capture.doCaptures({ tab: tab, urls: urls });
+
+            case 6:
+                captureModels = context$1$0.sent;
+                context$1$0.next = 9;
+                return tabsModel.remove(tab.id);
+
+            case 9:
+                return context$1$0.abrupt('return', captureModels);
+
+            case 10:
+            case 'end':
+                return context$1$0.stop();
+        }
+    }, null, _this);
+};
+
+var openResults = function openResults(_ref2) {
+    var tabsModel = _ref2.tabsModel;
+    var captureModels = _ref2.captureModels;
+    var resultsService, tab;
+    return regeneratorRuntime.async(function openResults$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+            case 0:
+                resultsService = new _ResultsService2['default']({ 'tabs': tabsModel, captureModels: captureModels });
+                context$1$0.next = 3;
+                return resultsService.createTab({ 'path': 'html/capture_result.html' });
+
+            case 3:
+                tab = context$1$0.sent;
+
+            case 4:
+            case 'end':
+                return context$1$0.stop();
+        }
+    }, null, _this);
+};
+
+chrome.runtime.onMessage.addListener(function callee$0$0(_ref3) {
+    var type = _ref3.type;
+    var urls = _ref3.urls;
+    var tabsModel, captureModels;
     return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
@@ -38,40 +84,23 @@ chrome.runtime.onMessage.addListener(function callee$0$0(_ref) {
                 return context$1$0.abrupt('return');
 
             case 2:
-                capture = new _CaptureVisibleTab2['default']();
+                tabsModel = _TabsModel$StorageModel.tabs();
                 context$1$0.next = 5;
-                return capture.createTab();
+                return execCapture({ tabsModel: tabsModel, urls: urls });
 
             case 5:
-                tab = context$1$0.sent;
+                captureModels = context$1$0.sent;
                 context$1$0.next = 8;
-                return capture.doCaptures({ tab: tab, urls: urls });
+                return openResults({ tabsModel: tabsModel, captureModels: captureModels });
 
             case 8:
-                captureModels = context$1$0.sent;
-
-                capture.removeTab({ tab: tab });
-
-                url = '\n        <!DOCTYPE html>\n        <html>\n            <head><title>results</title></head>\n            <body>aaaaaaaaaaaaaaaaa</body>\n        </html>\n    ';
-
-                chrome.tabs.create({
-                    'url': 'data:text/html,' + url
-                }, function (tab) {
-                    chrome.tabs.executeScript(tab.id, {
-                        'code': 'document.body.innerHTML = "bbbbbbbbbbbb"',
-                        'runAt': 'document_end'
-                    });
-                });
-
-            case 12:
             case 'end':
                 return context$1$0.stop();
         }
     }, null, _this);
 });
-//    let indexHtmlUrl = chrome.extension.getURL('web_accessible_resources/index.html');
 
-},{"./models/Capture/Service":96,"babel-core/polyfill":88,"bluebird":89,"monapt":93}],2:[function(require,module,exports){
+},{"./base":97,"./models/Domain/Capture/Service":100,"./models/Domain/Results/Service":103,"chrome-extension-api-promise":91}],2:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -8599,23 +8628,171 @@ process.chdir = function (dir) {
 process.umask = function() { return 0; };
 
 },{}],91:[function(require,module,exports){
-arguments[4][89][0].apply(exports,arguments)
-},{"_process":90,"dup":89}],92:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
     value: true
 });
 
-var _interopRequireDefault = function (obj) { return obj && obj.__esModule ? obj : { 'default': obj }; };
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } };
+var _storage = require('./storage');
+
+var _storage2 = _interopRequireDefault(_storage);
+
+var _tabs = require('./tabs');
+
+var _tabs2 = _interopRequireDefault(_tabs);
+
+exports.storage = _storage2['default'];
+exports.tabs = _tabs2['default'];
+
+},{"./storage":92,"./tabs":93}],92:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _ = (function () {
+    function _() {
+        _classCallCheck(this, _);
+    }
+
+    _createClass(_, [{
+        key: "getLocal",
+        value: function getLocal(keys) {
+            return new Promise(function (resolve, reject) {
+                chrome.storage.local.get(keys, function (items) {
+                    if (chrome.runtime.lastError) {
+                        return reject(chrome.runtime.lastError.message);
+                    }
+                    resolve(items);
+                });
+            });
+        }
+    }, {
+        key: "setLocal",
+        value: function setLocal(items) {
+            return new Promise(function (resolve, reject) {
+                chrome.storage.local.set(items, function () {
+                    if (chrome.runtime.lastError) {
+                        return reject(chrome.runtime.lastError.message);
+                    }
+                    resolve();
+                });
+            });
+        }
+    }]);
+
+    return _;
+})();
+
+exports["default"] = _;
+module.exports = exports["default"];
+
+},{}],93:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _Promise = require('bluebird');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _Promise2 = _interopRequireDefault(_Promise);
+var _ = (function () {
+    function _() {
+        _classCallCheck(this, _);
+    }
+
+    _createClass(_, [{
+        key: 'create',
+        value: function create(createProperties) {
+            return new Promise(function (resolve) {
+                return chrome.tabs.create(createProperties, resolve);
+            });
+        }
+    }, {
+        key: 'createActive',
+        value: function createActive(createProperties) {
+            var prop = Object.assing(createProperties, { 'active': true });
+            return this.create(prop);
+        }
+    }, {
+        key: 'remove',
+        value: function remove(tabId) {
+            return new Promise(function (resolve) {
+                return chrome.tabs.remove(tabId, resolve);
+            });
+        }
+    }, {
+        key: 'update',
+        value: function update(tabId, updateProperties) {
+            return new Promise(function (resolve) {
+                return chrome.tabs.update(tabId, updateProperties, resolve);
+            });
+        }
+    }, {
+        key: 'sendMessage',
+        value: function sendMessage(tabId, message) {
+            return new Promise(function (resolve) {
+                return chrome.tabs.sendMessage(tabId, message, resolve);
+            });
+        }
+    }, {
+        key: 'waitComplete',
+        value: function waitComplete(tabId) {
+            return new Promise(function (resolve) {
+                chrome.tabs.get(tabId, function (tab) {
+                    if (tab.status === 'complete') {
+                        return resolve();
+                    }
+                    var listener = function listener(loadTabId, changeInfo) {
+                        if (tabId !== loadTabId) {
+                            return;
+                        }
+                        if (changeInfo['status'] !== 'complete') {
+                            return;
+                        }
+                        chrome.tabs.onUpdated.removeListener(listener);
+                        resolve();
+                    };
+                    chrome.tabs.onUpdated.addListener(listener);
+                });
+            });
+        }
+    }]);
+
+    return _;
+})();
+
+exports['default'] = _;
+module.exports = exports['default'];
+
+},{}],94:[function(require,module,exports){
+arguments[4][89][0].apply(exports,arguments)
+},{"_process":90,"dup":89}],95:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _bluebird = require('bluebird');
+
+var _bluebird2 = _interopRequireDefault(_bluebird);
 
 var captureVisibleTabFull = (function () {
     function captureVisibleTabFull() {
@@ -8639,7 +8816,7 @@ var captureVisibleTabFull = (function () {
 
                     case 2:
                         context$2$0.next = 4;
-                        return this._sendMessage(tab, { type: 'ready' });
+                        return this._sendMessage(tab, { 'type': 'ready' });
 
                     case 4:
                         _ref2 = context$2$0.sent;
@@ -8653,7 +8830,7 @@ var captureVisibleTabFull = (function () {
                         context$2$0.next = 13;
                         return Array(maxIndexSize).join(',').split(',').reduce(function (base, _, index) {
                             return base.then(function () {
-                                return _this._sendMessage(tab, { type: 'doScroll', index: index });
+                                return _this._sendMessage(tab, { 'type': 'doScroll', index: index });
                             }).then(function (_ref3) {
                                 var top = _ref3.top;
                                 var left = _ref3.left;
@@ -8675,11 +8852,11 @@ var captureVisibleTabFull = (function () {
 
                                 return _this._drawImage({ context: context, dataURI: dataURI, left: left, top: top });
                             });
-                        }, _Promise2['default'].resolve());
+                        }, _bluebird2['default'].resolve());
 
                     case 13:
                         context$2$0.next = 15;
-                        return this._sendMessage(tab, { type: 'done' });
+                        return this._sendMessage(tab, { 'type': 'done' });
 
                     case 15:
                         return context$2$0.abrupt('return', canvas);
@@ -8693,7 +8870,7 @@ var captureVisibleTabFull = (function () {
     }, {
         key: '_sendMessage',
         value: function _sendMessage(tab, message) {
-            return new _Promise2['default'](function (resolve, reject) {
+            return new _bluebird2['default'](function (resolve, reject) {
                 chrome.tabs.sendMessage(tab.id, message, function (result) {
                     return resolve(result);
                 });
@@ -8723,7 +8900,7 @@ var captureVisibleTabFull = (function () {
         key: '_loadContentScript',
         value: function _loadContentScript(tab) {
             var code = '(' + contentScript.toString() + ')();';
-            return new _Promise2['default'](function (resolve, reject) {
+            return new _bluebird2['default'](function (resolve, reject) {
                 chrome.tabs.executeScript(tab.id, { code: code }, function () {
                     return resolve();
                 });
@@ -8732,10 +8909,10 @@ var captureVisibleTabFull = (function () {
     }, {
         key: '_doCapture',
         value: function _doCapture(tab) {
-            return new _Promise2['default'](function (resolve) {
+            return new _bluebird2['default'](function (resolve) {
                 var param = {
-                    format: 'png',
-                    quality: 100
+                    'format': 'png',
+                    'quality': 100
                 };
                 chrome.tabs.captureVisibleTab(tab.windowId, param, resolve);
             });
@@ -8743,7 +8920,7 @@ var captureVisibleTabFull = (function () {
     }, {
         key: '_sleep',
         value: function _sleep(msec) {
-            return new _Promise2['default'](function (resolve) {
+            return new _bluebird2['default'](function (resolve) {
                 return setTimeout(resolve, msec);
             });
         }
@@ -8757,7 +8934,7 @@ var captureVisibleTabFull = (function () {
             var left = _ref7.left;
             var top = _ref7.top;
 
-            return new _Promise2['default'](function (resolve) {
+            return new _bluebird2['default'](function (resolve) {
                 console.assert('string' === typeof dataURI);
                 var image = new Image();
                 image.addEventListener('load', function () {
@@ -8854,8 +9031,8 @@ function contentScript() {
             key: 'getFullSize',
             value: function getFullSize() {
                 return {
-                    width: this.fullWidth,
-                    height: this.fullHeight };
+                    'width': this.fullWidth,
+                    'height': this.fullHeight };
             }
         }, {
             key: '_getMaxSize',
@@ -8929,17 +9106,17 @@ function contentScript() {
 
     var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
     var TypeCommands = {
-        context: {},
+        'context': {},
         ready: function ready(_ref11) {
             var request = _ref11.request;
 
             this.context = {};
             this.context.scroller = new Scroller({ global: global });
             return {
-                type: 'Initialized',
-                contentFullSize: this.context.scroller.getContentFullSize(),
-                maxIndexSize: this.context.scroller.getScopeSize(),
-                devicePixelRatio: global.devicePixelRatio || 1
+                'type': 'Initialized',
+                'contentFullSize': this.context.scroller.getContentFullSize(),
+                'maxIndexSize': this.context.scroller.getScopeSize(),
+                'devicePixelRatio': global.devicePixelRatio || 1
             };
         },
         doScroll: function doScroll(_ref12) {
@@ -8949,9 +9126,9 @@ function contentScript() {
             var result = this.context.scroller.doScroll(index);
             console.assert(Array.isArray(result));
             return {
-                type: 'ScrollResult',
-                left: result[0],
-                top: result[1]
+                'type': 'ScrollResult',
+                'left': result[0],
+                'top': result[1]
             };
         },
         done: function done(_ref13) {
@@ -8963,7 +9140,7 @@ function contentScript() {
     };
 
     function onMessage(request) {
-        var type = request.type;
+        var type = request['type'];
         if (TypeCommands[type]) {
             return TypeCommands[type]({ request: request });
         }
@@ -8974,7 +9151,7 @@ function contentScript() {
 }
 module.exports = exports['default'];
 
-},{"bluebird":91}],93:[function(require,module,exports){
+},{"bluebird":94}],96:[function(require,module,exports){
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
@@ -9642,7 +9819,26 @@ return monapt;
 
 }));
 
-},{}],94:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
+'use strict';
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+require('babel-core/polyfill');
+
+var _Promise = require('bluebird');
+
+var _Promise2 = _interopRequireDefault(_Promise);
+
+var _monapt = require('monapt');
+
+var _monapt2 = _interopRequireDefault(_monapt);
+
+var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
+global.Promise = _Promise2['default'];
+global.monapt = _monapt2['default'];
+
+},{"babel-core/polyfill":88,"bluebird":89,"monapt":96}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9665,8 +9861,8 @@ var Model = (function () {
 	}
 
 	_createClass(Model, [{
-		key: "getBlobURL",
-		value: function getBlobURL() {
+		key: "getBlob",
+		value: function getBlob() {
 			return this.blob;
 		}
 	}]);
@@ -9677,7 +9873,7 @@ var Model = (function () {
 exports["default"] = Model;
 module.exports = exports["default"];
 
-},{}],95:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -9749,7 +9945,7 @@ var _ = (function () {
 exports['default'] = _;
 module.exports = exports['default'];
 
-},{"./Model":94}],96:[function(require,module,exports){
+},{"./Model":98}],100:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -9768,19 +9964,17 @@ var _Model = require('./Model');
 
 var _Model2 = _interopRequireDefault(_Model);
 
-var _CaptureVisibleTab = require('chrome-tab-captureVisibleTab-full');
+var _CaptureVisibleTab = require('chrome-tab-capture-visible-tab-full');
 
 var _CaptureVisibleTab2 = _interopRequireDefault(_CaptureVisibleTab);
 
-var _Repository = require('./Repository');
-
-var _Repository2 = _interopRequireDefault(_Repository);
-
 var _ = (function () {
-    function _() {
+    function _(_ref) {
+        var tabs = _ref.tabs;
+
         _classCallCheck(this, _);
 
-        this.repository = new _Repository2['default']();
+        this.tabs = tabs;
         this.captureVisibleTab = new _CaptureVisibleTab2['default']();
     }
 
@@ -9820,58 +10014,23 @@ var _ = (function () {
             });
         }
     }, {
-        key: 'createTab',
-        value: function createTab() {
-            return regeneratorRuntime.async(function createTab$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
-                        return context$2$0.abrupt('return', new Promise(function (resolve) {
-                            chrome.tabs.create({
-                                'active': true
-                            }, resolve);
-                        }));
-
-                    case 1:
-                    case 'end':
-                        return context$2$0.stop();
-                }
-            }, null, this);
-        }
-    }, {
-        key: 'removeTab',
-        value: function removeTab(_ref) {
-            var tab = _ref.tab;
-            return regeneratorRuntime.async(function removeTab$(context$2$0) {
-                while (1) switch (context$2$0.prev = context$2$0.next) {
-                    case 0:
-                        return context$2$0.abrupt('return', new Promise(function (resolve) {
-                            chrome.tabs.remove(tab.id, resolve);
-                        }));
-
-                    case 1:
-                    case 'end':
-                        return context$2$0.stop();
-                }
-            }, null, this);
-        }
-    }, {
         key: '_updateTab',
         value: function _updateTab(tabId, url) {
-            return new Promise(function (resolve) {
-                var listener = function listener(loadTabId, changeInfo) {
-                    if (tabId !== loadTabId) {
-                        return;
-                    }
-                    if (changeInfo['status'] !== 'complete') {
-                        return;
-                    }
-                    chrome.tabs.onUpdated.removeListener(listener);
-                    resolve();
-                };
-                chrome.tabs.update(tabId, { 'url': url }, function () {
-                    chrome.tabs.onUpdated.addListener(listener);
-                });
-            });
+            return regeneratorRuntime.async(function _updateTab$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                    case 0:
+                        context$2$0.next = 2;
+                        return this.tabs.update(tabId, { 'url': url });
+
+                    case 2:
+                        context$2$0.next = 4;
+                        return this.tabs.waitComplete(tabId);
+
+                    case 4:
+                    case 'end':
+                        return context$2$0.stop();
+                }
+            }, null, this);
         }
     }, {
         key: '_getCapture',
@@ -9924,4 +10083,177 @@ var _ = (function () {
 exports['default'] = _;
 module.exports = exports['default'];
 
-},{"./Model":94,"./Repository":95,"chrome-tab-captureVisibleTab-full":92}]},{},[1]);
+},{"./Model":98,"chrome-tab-capture-visible-tab-full":95}],101:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Model = (function () {
+    function Model(_ref) {
+        var captures = _ref.captures;
+
+        _classCallCheck(this, Model);
+
+        this.captures = captures;
+    }
+
+    _createClass(Model, [{
+        key: "getCaptures",
+        value: function getCaptures() {
+            return this.captures;
+        }
+    }]);
+
+    return Model;
+})();
+
+exports["default"] = Model;
+module.exports = exports["default"];
+
+},{}],102:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+	value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _defineProperty(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _Repository = require('../Capture/Repository');
+
+var _Repository2 = _interopRequireDefault(_Repository);
+
+var _Model = require('./Model');
+
+var _Model2 = _interopRequireDefault(_Model);
+
+var _ = (function () {
+	function _() {
+		_classCallCheck(this, _);
+	}
+
+	_createClass(_, [{
+		key: 'get',
+		value: function get(url) {
+			var _this = this;
+
+			return new Promise(function (resolve, reject) {
+				var key = _this.storageKey + url;
+				chrome.storage.local.get(key, function (result) {
+					if (chrome.runtime.lastError) {
+						return reject(chrome.runtime.lastError.message);
+					}
+					var data = result[key];
+					if (!data) {
+						return resolve(monapt.None);
+					}
+					var capture = new _Model2['default']({
+						'url': data['url'],
+						'blob': data['blob'] });
+					resolve(monapt.Option(capture));
+				});
+			});
+		}
+	}, {
+		key: 'save',
+		value: function save(capture) {
+			var _this2 = this;
+
+			return new Promise(function (resolve, reject) {
+				chrome.storage.local.set(_defineProperty({}, _this2.storageKey + capture['url'], {
+					'url': capture['url'],
+					'blob': capture['blob'] }), function () {
+					if (chrome.runtime.lastError) {
+						return reject(chrome.runtime.lastError.message);
+					}
+					resolve();
+				});
+			});
+		}
+	}]);
+
+	return _;
+})();
+
+exports['default'] = _;
+module.exports = exports['default'];
+
+},{"../Capture/Repository":99,"./Model":101}],103:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+var _Model = require('./Model');
+
+var _Model2 = _interopRequireDefault(_Model);
+
+var _Repository = require('./Repository');
+
+var _Repository2 = _interopRequireDefault(_Repository);
+
+var _ = (function () {
+    function _(_ref) {
+        var tabs = _ref.tabs;
+        var captureModels = _ref.captureModels;
+
+        _classCallCheck(this, _);
+
+        this.tabs = tabs;
+        this.model = new _Model2['default'](captureModels);
+    }
+
+    _createClass(_, [{
+        key: 'createTab',
+        value: function createTab(_ref2) {
+            var path = _ref2.path;
+            var url, tab;
+            return regeneratorRuntime.async(function createTab$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                    case 0:
+                        url = chrome.extension.getURL(path);
+                        context$2$0.next = 3;
+                        return this.tabs.createActive({ url: url });
+
+                    case 3:
+                        tab = context$2$0.sent;
+                        context$2$0.next = 6;
+                        return this.tabs.waitComplete(tab.id);
+
+                    case 6:
+                        return context$2$0.abrupt('return', tab);
+
+                    case 7:
+                    case 'end':
+                        return context$2$0.stop();
+                }
+            }, null, this);
+        }
+    }]);
+
+    return _;
+})();
+
+exports['default'] = _;
+module.exports = exports['default'];
+
+},{"./Model":101,"./Repository":102}]},{},[1]);

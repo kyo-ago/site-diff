@@ -1,40 +1,26 @@
-import 'babel-core/polyfill';
-import Promise from 'bluebird';
-import monapt from 'monapt';
-const global = (
-    "undefined" !== typeof window ? window
-        : "undefined" !== typeof global ? global
-        : "undefined" !== typeof self ? self
-        : {}
-);
-global.Promise = Promise;
-global.monapt = monapt;
+import './base';
+import { tabs as TabsModel, storage as StorageModel } from 'chrome-extension-api-promise';
+import CaptureService from './models/Domain/Capture/Service';
+import ResultsService from './models/Domain/Results/Service';
 
-import CaptureVisibleTab from './models/Capture/Service';
+let execCapture = async ({tabsModel, urls}) => {
+    let capture = new CaptureVisibleTab({'tabs': tabsModel});
+    let tab = await tabsModel.createActive();
+    let captureModels = await capture.doCaptures({tab, urls});
+    await tabsModel.remove(tab.id);
+    return captureModels;
+};
+
+let openResults = async ({tabsModel, captureModels}) => {
+    let resultsService = new ResultsService({'tabs': tabsModel, captureModels});
+    let tab = await resultsService.createTab({'path': 'html/capture_result.html'});
+};
 
 chrome.runtime.onMessage.addListener(async ({type, urls}) => {
     if (type !== 'doCaptures') {
         return;
     }
-    let capture = new CaptureVisibleTab();
-    let tab = await capture.createTab();
-    let captureModels = await capture.doCaptures({tab, urls});
-    capture.removeTab({tab});
-
-//    let indexHtmlUrl = chrome.extension.getURL('web_accessible_resources/index.html');
-    var url = `
-        <!DOCTYPE html>
-        <html>
-            <head><title>results</title></head>
-            <body>aaaaaaaaaaaaaaaaa</body>
-        </html>
-    `;
-    chrome.tabs.create({
-        'url': 'data:text/html,' + url
-    }, (tab) => {
-        chrome.tabs.executeScript(tab.id, {
-            'code': 'document.body.innerHTML = "bbbbbbbbbbbb"',
-            'runAt': 'document_end'
-        });
-    });
+    let tabsModel = TabsModel();
+    let captureModels = await execCapture({tabsModel, urls});
+    await openResults({tabsModel, captureModels});
 });

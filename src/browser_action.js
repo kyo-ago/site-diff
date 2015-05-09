@@ -1,4 +1,6 @@
 import './base';
+import React from 'react';
+global.React = React;
 import Context from './Context';
 import IndexComponent from './components/index';
 (() => {

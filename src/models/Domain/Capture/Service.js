@@ -1,10 +1,9 @@
 import Model from './Model';
-import CaptureVisibleTab from 'chrome-tab-captureVisibleTab-full';
-import Repository from './Repository';
+import CaptureVisibleTab from 'chrome-tab-capture-visible-tab-full';
 
 export default class _ {
-    constructor() {
-        this.repository = new Repository();
+    constructor({tabs}) {
+        this.tabs = tabs;
         this.captureVisibleTab = new CaptureVisibleTab();
     }
     _canvasToBlob(canvas) {
@@ -28,34 +27,9 @@ export default class _ {
             resolve(new Blob([arr], {'type': mimeType}));
         });
     }
-    async createTab() {
-        return new Promise((resolve) => {
-            chrome.tabs.create({
-                'active': true
-            }, resolve);
-        });
-    }
-    async removeTab({tab}) {
-        return new Promise((resolve) => {
-            chrome.tabs.remove(tab.id, resolve);
-        });
-    }
-    _updateTab(tabId, url) {
-        return new Promise((resolve) => {
-            let listener = (loadTabId, changeInfo) => {
-                if (tabId !== loadTabId) {
-                    return;
-                }
-                if (changeInfo['status'] !== 'complete') {
-                    return;
-                }
-                chrome.tabs.onUpdated.removeListener(listener);
-                resolve();
-            };
-            chrome.tabs.update(tabId, {'url': url}, () => {
-                chrome.tabs.onUpdated.addListener(listener);
-            });
-        });
+    async _updateTab(tabId, url) {
+        await this.tabs.update(tabId, {'url': url});
+        await this.tabs.waitComplete(tabId);
     }
     async _getCapture(tab, url) {
         let canvas = await this.captureVisibleTab.capture({tab});

@@ -25,6 +25,7 @@ gulp.task('zip', function () {
 
     var bundlePaths = {
         src: [
+            'src/web_accessible_resource.js',
             'src/browser_action.js',
             'src/background.js'
         ],

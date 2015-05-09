@@ -3,7 +3,7 @@ export default class Model {
 		this.url = url;
 		this.blob = blob;
 	}
-	getBlobURL() {
+	getBlob() {
 		return this.blob;
 	}
 }

@@ -1,9 +1,14 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+(function (global){
 'use strict';
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
 require('./base');
+
+var _React = require('react');
+
+var _React2 = _interopRequireDefault(_React);
 
 var _Context = require('./Context');
 
@@ -13,16 +18,19 @@ var _IndexComponent = require('./components/index');
 
 var _IndexComponent2 = _interopRequireDefault(_IndexComponent);
 
+global.React = _React2['default'];
+
 (function () {
     if (!chrome || !chrome.tabs) {
         return;
     }
     var context = new _Context2['default']();
 
-    React.render(React.createElement(_IndexComponent2['default'], { context: context }), document.querySelector('#content'));
+    _React2['default'].render(_React2['default'].createElement(_IndexComponent2['default'], { context: context }), document.querySelector('#content'));
 })();
 
-},{"./Context":261,"./base":262,"./components/index":265}],2:[function(require,module,exports){
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./Context":261,"./base":262,"./components/index":265,"react":259}],2:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -30880,16 +30888,11 @@ var _monapt = require('monapt');
 
 var _monapt2 = _interopRequireDefault(_monapt);
 
-var _React = require('react');
-
-var _React2 = _interopRequireDefault(_React);
-
 var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
 global.Promise = _Promise2['default'];
 global.monapt = _monapt2['default'];
-global.React = _React2['default'];
 
-},{"babel-core/polyfill":88,"bluebird":89,"monapt":103,"react":259}],263:[function(require,module,exports){
+},{"babel-core/polyfill":88,"bluebird":89,"monapt":103}],263:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
