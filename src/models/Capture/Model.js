@@ -1,16 +1,9 @@
-import resemble from 'resemblejs';
-
-export default class _ {
-	constructor({url, imageDataURI}) {
+export default class Model {
+	constructor({url, blob}) {
 		this.url = url;
-		this.imageDataURI = imageDataURI;
+		this.blob = blob;
 	}
-	getImageDataURI() {
-		return this.imageDataURI;
-	}
-	diff(capture) {
-		const bef = capture.getImageDataURI();
-		const aft = this.imageDataURI
-		return new Promise((resolve) => resemble(bef).compareTo(aft).onComplete(resolve))
+	getBlobURL() {
+		return this.blob;
 	}
 }

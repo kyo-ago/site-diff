@@ -17,7 +17,7 @@ export default class _ {
 				}
 				const capture = new Model({
 					'url': data['url'],
-					'imageDataURI': data['imageDataURI'],
+					'blob': data['blob'],
 				});
 		    	resolve(monapt.Option(capture));
 		    });
@@ -28,7 +28,7 @@ export default class _ {
 			chrome.storage.local.set({
 				[this.storageKey + capture['url']]: {
 					'url': capture['url'],
-					'imageDataURI': capture['imageDataURI'],
+					'blob': capture['blob'],
 				}
 			}, () => {
 				if (chrome.runtime.lastError) {

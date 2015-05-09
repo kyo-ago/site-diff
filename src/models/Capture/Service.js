@@ -5,44 +5,71 @@ import Repository from './Repository';
 export default class _ {
     constructor() {
         this.repository = new Repository();
+        this.captureVisibleTab = new CaptureVisibleTab();
     }
-    _loadCurrentTab() {
+    _canvasToBlob(canvas) {
         return new Promise((resolve) => {
-            chrome.tabs.query({
-                'active': true,
-                'currentWindow': true
-            }, (result) => resolve( result.shift() ))
-        });
-    }
-    _captureVisibleTab(tab) {
-        let captureVisibleTab = new CaptureVisibleTab({tab});
-        return captureVisibleTab.capture();
-    }
-    async _getCurrentCapture(tab) {
-        let canvas = await this._captureVisibleTab(tab);
-        return new Model({
-            'url': tab.url,
-            'imageDataURI': canvas.toDataURL()
-        });
-    }
-    async load() {
-        let tab = await this._loadCurrentTab();
-        this.afterCapture = await this._getCurrentCapture(tab);
-        this.beforeDataOpt = await this.repository.get(tab.url);
-    }
-    isFirstLoad() {
-        return this.beforeDataOpt.isEmpty;
-    }
-    async getImageDataUri() {
-        return this.beforeDataOpt.match({
-            Some: async (beforeCapture) => {
-                let diff = await this.afterCapture.diff(beforeCapture);
-                return diff.getImageDataUrl();
-            },
-            None: async () => {
-                await this.repository.save(this.afterCapture);
-                return this.afterCapture.getImageDataURI();
+            if (canvas.toBlob) {
+                return canvas.toBlob(resolve);
             }
+
+            // HTMLCanvasElement.toBlob() - Web API Interfaces | MDN https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
+            let dataURLScheme = canvas.toDataURL();
+            let [scheme, data] = dataURLScheme.split(',', 2);
+            let [, mimeType] = scheme.match(/:(.+?);/);
+            let binStr = atob(data);
+            let len = binStr.length;
+            let arr = new Uint8Array(len);
+
+            for (let i = 0; i < len; i++) {
+                arr[i] = binStr.charCodeAt(i);
+            }
+
+            resolve(new Blob([arr], {'type': mimeType}));
         });
+    }
+    async createTab() {
+        return new Promise((resolve) => {
+            chrome.tabs.create({
+                'active': true
+            }, resolve);
+        });
+    }
+    async removeTab({tab}) {
+        return new Promise((resolve) => {
+            chrome.tabs.remove(tab.id, resolve);
+        });
+    }
+    _updateTab(tabId, url) {
+        return new Promise((resolve) => {
+            let listener = (loadTabId, changeInfo) => {
+                if (tabId !== loadTabId) {
+                    return;
+                }
+                if (changeInfo['status'] !== 'complete') {
+                    return;
+                }
+                chrome.tabs.onUpdated.removeListener(listener);
+                resolve();
+            };
+            chrome.tabs.update(tabId, {'url': url}, () => {
+                chrome.tabs.onUpdated.addListener(listener);
+            });
+        });
+    }
+    async _getCapture(tab, url) {
+        let canvas = await this.captureVisibleTab.capture({tab});
+        let blob = await this._canvasToBlob(canvas);
+        return new Model({url, blob});
+    }
+    doCaptures({tab, urls}) {
+        return urls.reduce((base, urlObj) => {
+            return base.then((res) => {
+                return this._updateTab(tab.id, urlObj.href)
+                    .then(() => this._getCapture(tab, urlObj.href))
+                    .then((model) => (res.push(model), res))
+                ;
+            });
+        }, Promise.resolve([]));
     }
 }

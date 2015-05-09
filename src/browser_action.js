@@ -11,4 +11,4 @@ import IndexComponent from './components/index';
         <IndexComponent context={context} />,
         document.querySelector('#content')
     );
-})()
+})();

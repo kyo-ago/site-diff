@@ -19,3 +19,30 @@ gulp.task('zip', function () {
         .pipe(gulp.dest('./'))
     ;
 });
+
+(function () {
+    var watchify = require('gulp-watchify');
+
+    var bundlePaths = {
+        src: [
+            'src/browser_action.js',
+            'src/background.js'
+        ],
+        dest:'extension/js/'
+    };
+
+    var watching = false;
+    gulp.task('enable-watch-mode', function() { watching = true });
+
+    gulp.task('browserify', watchify(function(watchify) {
+        return gulp.src(bundlePaths.src)
+            .pipe(watchify({
+                watch: watching
+            }))
+            .pipe(gulp.dest(bundlePaths.dest))
+    }));
+
+    gulp.task('watchify', ['enable-watch-mode', 'browserify']);
+})();
+
+gulp.task('build', ['browserify']);

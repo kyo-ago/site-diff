@@ -3,7 +3,7 @@ export default class _ extends React.Component {
         super(props);
     }
     doLoad(urls) {
-        let urlObjs = urls.split('\n').map((url) => new URL(url));
+        let urlObjs = urls.split('\n').filter((_) => _).map((url) => new URL(url));
         if (!urlObjs.length) {
             return;
         }

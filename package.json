@@ -18,27 +18,27 @@
     "chrome-tab-captureVisibleTab-full": "git+https://github.com/kyo-ago/chrome-tab-captureVisibleTab-full.git",
     "material-flux": "^1.2.0",
     "monapt": "^0.3.8",
+    "object-assign": "^2.0.0",
     "react": "^0.13.2",
     "resemblejs": "git+https://github.com/kyo-ago/Resemble.js.git"
   },
   "devDependencies": {
     "babelify": "^6.0.2",
-    "browserify": "^9.0.8",
     "david": "^6.1.6",
     "fixpack": "^2.2.0",
     "gulp": "^3.8.11",
     "gulp-bump": "^0.3.0",
-    "gulp-zip": "^3.0.2",
-    "watchify": "^3.1.1"
+    "gulp-watchify": "^0.5.0",
+    "gulp-zip": "^3.0.2"
   },
   "license": "GPL3",
   "scripts": {
-    "build": "browserify src/index.js -o extension/js/index.js",
+    "build": "gulp build",
     "clean": "rm -fr archive.zip typings dist extension/js node_modules",
     "deploy": "npm run fix && npm run clean && npm install && npm run build && gulp bump && gulp zip",
     "fix": "fixpack && david",
     "postinstall": "",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "watchify src/index.js -o extension/js/index.js -v"
+    "watch": "gulp watchify"
   }
 }
