@@ -5,7 +5,15 @@ var _this = this;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-require('./base');
+require('babel-core/polyfill');
+
+var _Promise = require('bluebird');
+
+var _Promise2 = _interopRequireDefault(_Promise);
+
+var _monapt = require('monapt');
+
+var _monapt2 = _interopRequireDefault(_monapt);
 
 var _TabsModel$StorageModel = require('chrome-extension-api-promise');
 
@@ -17,6 +25,17 @@ var _ResultsService = require('./models/Domain/Results/Service');
 
 var _ResultsService2 = _interopRequireDefault(_ResultsService);
 
+var _ResultsRepository = require('./models/Domain/Results/Repository');
+
+var _ResultsRepository2 = _interopRequireDefault(_ResultsRepository);
+
+var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
+global.Promise = _Promise2['default'];
+global.monapt = _monapt2['default'];
+
+var storageModel = new _TabsModel$StorageModel.storage();
+var resultsRepository = new _ResultsRepository2['default']({ 'storage': storageModel });
+
 var execCapture = function execCapture(_ref) {
     var tabsModel = _ref.tabsModel;
     var urls = _ref.urls;
@@ -24,7 +43,7 @@ var execCapture = function execCapture(_ref) {
     return regeneratorRuntime.async(function execCapture$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
-                capture = new CaptureVisibleTab({ 'tabs': tabsModel });
+                capture = new _CaptureService2['default']({ 'tabs': tabsModel });
                 context$1$0.next = 3;
                 return tabsModel.createActive();
 
@@ -51,18 +70,27 @@ var execCapture = function execCapture(_ref) {
 var openResults = function openResults(_ref2) {
     var tabsModel = _ref2.tabsModel;
     var captureModels = _ref2.captureModels;
-    var resultsService, tab;
+    var resultsService, tab, serializedData, result;
     return regeneratorRuntime.async(function openResults$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
-                resultsService = new _ResultsService2['default']({ 'tabs': tabsModel, captureModels: captureModels });
+                resultsService = new _ResultsService2['default']({ 'tabs': tabsModel });
                 context$1$0.next = 3;
                 return resultsService.createTab({ 'path': 'html/capture_result.html' });
 
             case 3:
                 tab = context$1$0.sent;
+                serializedData = resultsRepository.serialize({ captureModels: captureModels });
+                context$1$0.next = 7;
+                return resultsService.sendResultMessage({ tab: tab, serializedData: serializedData });
 
-            case 4:
+            case 7:
+                result = context$1$0.sent;
+
+                resultsRepository.revokeSerialize({ serializedData: serializedData });
+                console.log(result);
+
+            case 10:
             case 'end':
                 return context$1$0.stop();
         }
@@ -84,7 +112,7 @@ chrome.runtime.onMessage.addListener(function callee$0$0(_ref3) {
                 return context$1$0.abrupt('return');
 
             case 2:
-                tabsModel = _TabsModel$StorageModel.tabs();
+                tabsModel = new _TabsModel$StorageModel.tabs();
                 context$1$0.next = 5;
                 return execCapture({ tabsModel: tabsModel, urls: urls });
 
@@ -100,7 +128,7 @@ chrome.runtime.onMessage.addListener(function callee$0$0(_ref3) {
     }, null, _this);
 });
 
-},{"./base":97,"./models/Domain/Capture/Service":100,"./models/Domain/Results/Service":103,"chrome-extension-api-promise":91}],2:[function(require,module,exports){
+},{"./models/Domain/Capture/Service":99,"./models/Domain/Results/Repository":101,"./models/Domain/Results/Service":102,"babel-core/polyfill":88,"bluebird":89,"chrome-extension-api-promise":91,"monapt":96}],2:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -8666,24 +8694,36 @@ var _ = (function () {
     _createClass(_, [{
         key: "getLocal",
         value: function getLocal(keys) {
+            var _this = this;
+
             return new Promise(function (resolve, reject) {
-                chrome.storage.local.get(keys, function (items) {
+                chrome.storage.local.get(keys, function () {
+                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                        args[_key] = arguments[_key];
+                    }
+
                     if (chrome.runtime.lastError) {
                         return reject(chrome.runtime.lastError.message);
                     }
-                    resolve(items);
+                    resolve.apply(_this, args);
                 });
             });
         }
     }, {
         key: "setLocal",
         value: function setLocal(items) {
+            var _this2 = this;
+
             return new Promise(function (resolve, reject) {
                 chrome.storage.local.set(items, function () {
+                    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+                        args[_key2] = arguments[_key2];
+                    }
+
                     if (chrome.runtime.lastError) {
                         return reject(chrome.runtime.lastError.message);
                     }
-                    resolve();
+                    resolve.apply(_this2, args);
                 });
             });
         }
@@ -8720,9 +8760,20 @@ var _ = (function () {
         }
     }, {
         key: 'createActive',
-        value: function createActive(createProperties) {
-            var prop = Object.assing(createProperties, { 'active': true });
+        value: function createActive() {
+            var createProperties = arguments[0] === undefined ? {} : arguments[0];
+
+            var prop = Object.assign(createProperties, { 'active': true });
             return this.create(prop);
+        }
+    }, {
+        key: 'openInnerPage',
+        value: function openInnerPage(path) {
+            var createProperties = arguments[1] === undefined ? {} : arguments[1];
+
+            var url = chrome.extension.getURL(path);
+            var prop = Object.assign(createProperties, { url: url });
+            return this.createActive(prop);
         }
     }, {
         key: 'remove',
@@ -8741,8 +8792,19 @@ var _ = (function () {
     }, {
         key: 'sendMessage',
         value: function sendMessage(tabId, message) {
-            return new Promise(function (resolve) {
-                return chrome.tabs.sendMessage(tabId, message, resolve);
+            var _this = this;
+
+            return new Promise(function (resolve, reject) {
+                return chrome.tabs.sendMessage(tabId, message, function () {
+                    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+                        args[_key] = arguments[_key];
+                    }
+
+                    if (chrome.runtime.lastError) {
+                        return reject(chrome.runtime.lastError.message);
+                    }
+                    resolve.apply(_this, args);
+                });
             });
         }
     }, {
@@ -9820,25 +9882,6 @@ return monapt;
 }));
 
 },{}],97:[function(require,module,exports){
-'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-require('babel-core/polyfill');
-
-var _Promise = require('bluebird');
-
-var _Promise2 = _interopRequireDefault(_Promise);
-
-var _monapt = require('monapt');
-
-var _monapt2 = _interopRequireDefault(_monapt);
-
-var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
-global.Promise = _Promise2['default'];
-global.monapt = _monapt2['default'];
-
-},{"babel-core/polyfill":88,"bluebird":89,"monapt":96}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9873,18 +9916,16 @@ var Model = (function () {
 exports["default"] = Model;
 module.exports = exports["default"];
 
-},{}],99:[function(require,module,exports){
+},{}],98:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-	value: true
+    value: true
 });
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _defineProperty(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -9893,59 +9934,41 @@ var _Model = require('./Model');
 var _Model2 = _interopRequireDefault(_Model);
 
 var _ = (function () {
-	function _() {
-		_classCallCheck(this, _);
+    function _(_ref) {
+        var storage = _ref.storage;
 
-		this.storageKey = 'capture-';
-	}
+        _classCallCheck(this, _);
 
-	_createClass(_, [{
-		key: 'get',
-		value: function get(url) {
-			var _this = this;
+        this.storage = storage;
+    }
 
-			return new Promise(function (resolve, reject) {
-				var key = _this.storageKey + url;
-				chrome.storage.local.get(key, function (result) {
-					if (chrome.runtime.lastError) {
-						return reject(chrome.runtime.lastError.message);
-					}
-					var data = result[key];
-					if (!data) {
-						return resolve(monapt.None);
-					}
-					var capture = new _Model2['default']({
-						'url': data['url'],
-						'blob': data['blob'] });
-					resolve(monapt.Option(capture));
-				});
-			});
-		}
-	}, {
-		key: 'save',
-		value: function save(capture) {
-			var _this2 = this;
+    _createClass(_, [{
+        key: 'serialize',
+        value: function serialize(_ref2) {
+            var model = _ref2.model;
 
-			return new Promise(function (resolve, reject) {
-				chrome.storage.local.set(_defineProperty({}, _this2.storageKey + capture['url'], {
-					'url': capture['url'],
-					'blob': capture['blob'] }), function () {
-					if (chrome.runtime.lastError) {
-						return reject(chrome.runtime.lastError.message);
-					}
-					resolve();
-				});
-			});
-		}
-	}]);
+            var blobURL = URL.createObjectURL(model['blob']);
+            return {
+                'url': model['url'],
+                blobURL: blobURL
+            };
+        }
+    }, {
+        key: 'revokeSerialize',
+        value: function revokeSerialize(_ref3) {
+            var data = _ref3.data;
 
-	return _;
+            URL.revokeObjectURL(data['blobURL']);
+        }
+    }]);
+
+    return _;
 })();
 
 exports['default'] = _;
 module.exports = exports['default'];
 
-},{"./Model":98}],100:[function(require,module,exports){
+},{"./Model":97}],99:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -10083,7 +10106,7 @@ var _ = (function () {
 exports['default'] = _;
 module.exports = exports['default'];
 
-},{"./Model":98,"chrome-tab-capture-visible-tab-full":95}],101:[function(require,module,exports){
+},{"./Model":97,"chrome-tab-capture-visible-tab-full":95}],100:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10116,81 +10139,74 @@ var Model = (function () {
 exports["default"] = Model;
 module.exports = exports["default"];
 
-},{}],102:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
-	value: true
+    value: true
 });
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-function _defineProperty(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); }
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-var _Repository = require('../Capture/Repository');
+var _CaptureRepository = require('../Capture/Repository');
 
-var _Repository2 = _interopRequireDefault(_Repository);
+var _CaptureRepository2 = _interopRequireDefault(_CaptureRepository);
 
 var _Model = require('./Model');
 
 var _Model2 = _interopRequireDefault(_Model);
 
 var _ = (function () {
-	function _() {
-		_classCallCheck(this, _);
-	}
+    function _(_ref) {
+        var storage = _ref.storage;
 
-	_createClass(_, [{
-		key: 'get',
-		value: function get(url) {
-			var _this = this;
+        _classCallCheck(this, _);
 
-			return new Promise(function (resolve, reject) {
-				var key = _this.storageKey + url;
-				chrome.storage.local.get(key, function (result) {
-					if (chrome.runtime.lastError) {
-						return reject(chrome.runtime.lastError.message);
-					}
-					var data = result[key];
-					if (!data) {
-						return resolve(monapt.None);
-					}
-					var capture = new _Model2['default']({
-						'url': data['url'],
-						'blob': data['blob'] });
-					resolve(monapt.Option(capture));
-				});
-			});
-		}
-	}, {
-		key: 'save',
-		value: function save(capture) {
-			var _this2 = this;
+        this.storage = storage;
+        this.captureRepository = new _CaptureRepository2['default']({ storage: storage });
+    }
 
-			return new Promise(function (resolve, reject) {
-				chrome.storage.local.set(_defineProperty({}, _this2.storageKey + capture['url'], {
-					'url': capture['url'],
-					'blob': capture['blob'] }), function () {
-					if (chrome.runtime.lastError) {
-						return reject(chrome.runtime.lastError.message);
-					}
-					resolve();
-				});
-			});
-		}
-	}]);
+    _createClass(_, [{
+        key: 'serialize',
+        value: function serialize(_ref2) {
+            var _this = this;
 
-	return _;
+            var captureModels = _ref2.captureModels;
+
+            var model = new _Model2['default']({ captures: captureModels });
+            var data = model.getCaptures().map(function (model) {
+                return _this.captureRepository.serialize({ model: model });
+            });
+            return {
+                'type': 'resultsMessage',
+                data: data
+            };
+        }
+    }, {
+        key: 'revokeSerialize',
+        value: function revokeSerialize(_ref3) {
+            var _this2 = this;
+
+            var serialize = _ref3.serializedData;
+
+            console.assert(serialize['type'] === 'resultsMessage');
+            serialize['data'].forEach(function (data) {
+                return _this2.captureRepository.revokeSerialize({ data: data });
+            });
+        }
+    }]);
+
+    return _;
 })();
 
 exports['default'] = _;
 module.exports = exports['default'];
 
-},{"../Capture/Repository":99,"./Model":101}],103:[function(require,module,exports){
+},{"../Capture/Repository":98,"./Model":100}],102:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
@@ -10207,42 +10223,56 @@ var _Model = require('./Model');
 
 var _Model2 = _interopRequireDefault(_Model);
 
-var _Repository = require('./Repository');
-
-var _Repository2 = _interopRequireDefault(_Repository);
-
 var _ = (function () {
     function _(_ref) {
         var tabs = _ref.tabs;
-        var captureModels = _ref.captureModels;
 
         _classCallCheck(this, _);
 
         this.tabs = tabs;
-        this.model = new _Model2['default'](captureModels);
     }
 
     _createClass(_, [{
         key: 'createTab',
         value: function createTab(_ref2) {
             var path = _ref2.path;
-            var url, tab;
+            var tab;
             return regeneratorRuntime.async(function createTab$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
-                        url = chrome.extension.getURL(path);
-                        context$2$0.next = 3;
-                        return this.tabs.createActive({ url: url });
+                        context$2$0.next = 2;
+                        return this.tabs.openInnerPage(path);
 
-                    case 3:
+                    case 2:
                         tab = context$2$0.sent;
-                        context$2$0.next = 6;
+                        context$2$0.next = 5;
                         return this.tabs.waitComplete(tab.id);
 
-                    case 6:
+                    case 5:
                         return context$2$0.abrupt('return', tab);
 
-                    case 7:
+                    case 6:
+                    case 'end':
+                        return context$2$0.stop();
+                }
+            }, null, this);
+        }
+    }, {
+        key: 'sendResultMessage',
+        value: function sendResultMessage(_ref3) {
+            var tab = _ref3.tab;
+            var serializedData = _ref3.serializedData;
+            var message;
+            return regeneratorRuntime.async(function sendResultMessage$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                    case 0:
+                        message = {
+                            'type': 'results',
+                            'data': serializedData
+                        };
+                        return context$2$0.abrupt('return', this.tabs.sendMessage(tab.id, message));
+
+                    case 2:
                     case 'end':
                         return context$2$0.stop();
                 }
@@ -10256,4 +10286,4 @@ var _ = (function () {
 exports['default'] = _;
 module.exports = exports['default'];
 
-},{"./Model":101,"./Repository":102}]},{},[1]);
+},{"./Model":100}]},{},[1]);

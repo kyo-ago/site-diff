@@ -1,15 +1,19 @@
 import Model from './Model';
-import Repository from './Repository';
 
 export default class _ {
-    constructor({tabs, captureModels}) {
+    constructor({tabs}) {
         this.tabs = tabs;
-        this.model = new Model(captureModels);
     }
     async createTab({path}) {
-        let url = chrome.extension.getURL(path);
-        let tab = await this.tabs.createActive({url});
+        let tab = await this.tabs.openInnerPage(path);
         await this.tabs.waitComplete(tab.id);
         return tab;
+    }
+    async sendResultMessage({tab, serializedData}) {
+        let message = {
+            'type': 'results',
+            'data': serializedData
+        };
+        return this.tabs.sendMessage(tab.id, message);
     }
 }

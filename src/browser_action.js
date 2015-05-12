@@ -1,16 +1,17 @@
-import './base';
-import React from 'react';
-global.React = React;
-import Context from './Context';
-import IndexComponent from './components/index';
-(() => {
-    if (!chrome || !chrome.tabs) {
+let handler = (event) => {
+    let text = event.target.value;
+    let urls = text.split('\n').filter((_) => _).map((url) => {
+        try {
+            return new URL(url.trim());
+        } catch (e) {}
+    });
+    if (!urls.length) {
         return;
     }
-    let context = new Context();
-
-    React.render(
-        <IndexComponent context={context} />,
-        document.querySelector('#content')
-    );
-})();
+    chrome.runtime.sendMessage({type: 'doCaptures', urls});
+};
+addEventListener('keyup', handler);
+addEventListener('paste', handler);
+addEventListener('load', () => {
+    document.querySelector('textarea').focus();
+});
