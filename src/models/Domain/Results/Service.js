@@ -1,6 +1,6 @@
 import Model from './Model';
 
-export default class _ {
+export default class Service {
     constructor({tabs}) {
         this.tabs = tabs;
     }

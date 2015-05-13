@@ -1,7 +1,7 @@
 import CaptureRepository from '../Capture/Repository';
 import Model from './Model';
 
-export default class _ {
+export default class Repository {
     constructor({storage}) {
         this.storage = storage;
         this.captureRepository = new CaptureRepository({storage});

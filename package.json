@@ -24,7 +24,6 @@
   },
   "devDependencies": {
     "babelify": "^6.0.2",
-    "david": "^6.1.6",
     "fixpack": "^2.2.0",
     "gulp": "^3.8.11",
     "gulp-bump": "^0.3.0",
@@ -34,9 +33,10 @@
   "license": "GPL3",
   "scripts": {
     "build": "gulp build",
-    "clean": "rm -fr archive.zip typings dist extension/js node_modules",
-    "deploy": "npm run fix && npm run clean && npm install && npm run build && gulp bump && gulp zip",
-    "fix": "fixpack && david",
+    "clean": "rm -fr archive.zip extension/js node_modules",
+    "deploy": "npm run fix && npm run clean && npm install && npm run build && npm version patch && gulp makeManifest && gulp zip",
+    "fix": "fixpack && npm update",
+    "makeManifest": "gulp makeManifest",
     "postinstall": "",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "gulp watchify"

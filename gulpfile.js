@@ -1,23 +1,35 @@
 "use strict";
 var gulp = require('gulp');
 
-gulp.task('bump', function () {
-    var bump = require('gulp-bump');
-    var path = require('path');
-    ['*.json', 'extension/*.json'].forEach(function (file) {
-        gulp.src(file)
-            .pipe(bump())
-            .pipe(gulp.dest(path.dirname(file)))
-        ;
-    });
-});
-
 gulp.task('zip', function () {
     var zip = require('gulp-zip');
     return gulp.src([ 'extension/**' ], { base: process.cwd() })
         .pipe(zip('archive.zip'))
         .pipe(gulp.dest('./'))
     ;
+});
+
+gulp.task('makeManifest', function () {
+    var fs = require('fs');
+    var pkg = require('./package.json');
+    fs.writeFileSync('./extension/manifest.json', JSON.stringify({
+        "name": pkg.name,
+        "version": pkg.version,
+        "manifest_version": 2,
+        "browser_action": {
+            "default_popup": "/html/browser_action.html"
+        },
+        "background": {
+            "scripts": ["/js/background.js"],
+            "persistent": false
+        },
+        "permissions": [
+            "tabs",
+            "storage",
+            "unlimitedStorage",
+            "<all_urls>"
+        ]
+    }, undefined, '    '));
 });
 
 (function () {

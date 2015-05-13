@@ -1,10 +1,10 @@
 import Model from './Model';
 import CaptureVisibleTab from 'chrome-tab-capture-visible-tab-full';
 
-export default class _ {
-    constructor({tabs}) {
+export default class Service {
+    constructor({tabs, overWriteDevicePixelRatio}) {
         this.tabs = tabs;
-        this.captureVisibleTab = new CaptureVisibleTab();
+        this.captureVisibleTab = new CaptureVisibleTab({overWriteDevicePixelRatio});
     }
     _canvasToBlob(canvas) {
         return new Promise((resolve) => {

@@ -43,7 +43,10 @@ var execCapture = function execCapture(_ref) {
     return regeneratorRuntime.async(function execCapture$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
-                capture = new _CaptureService2['default']({ 'tabs': tabsModel });
+                capture = new _CaptureService2['default']({
+                    'tabs': tabsModel,
+                    'overWriteDevicePixelRatio': 1
+                });
                 context$1$0.next = 3;
                 return tabsModel.createActive();
 
@@ -8857,16 +8860,20 @@ var _bluebird = require('bluebird');
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
 var captureVisibleTabFull = (function () {
-    function captureVisibleTabFull() {
+    function captureVisibleTabFull(_ref) {
+        var overWriteDevicePixelRatio = _ref.overWriteDevicePixelRatio;
+
         _classCallCheck(this, captureVisibleTabFull);
+
+        this.overWriteDevicePixelRatio = overWriteDevicePixelRatio;
     }
 
     _createClass(captureVisibleTabFull, [{
         key: 'capture',
-        value: function capture(_ref) {
-            var tab = _ref.tab;
+        value: function capture(_ref2) {
+            var tab = _ref2.tab;
 
-            var _ref2, contentFullSize, maxIndexSize, devicePixelRatio, canvas, context;
+            var _ref3, contentFullSize, maxIndexSize, devicePixelRatio, canvas, context;
 
             return regeneratorRuntime.async(function capture$(context$2$0) {
                 var _this = this;
@@ -8881,36 +8888,36 @@ var captureVisibleTabFull = (function () {
                         return this._sendMessage(tab, { 'type': 'ready' });
 
                     case 4:
-                        _ref2 = context$2$0.sent;
-                        contentFullSize = _ref2.contentFullSize;
-                        maxIndexSize = _ref2.maxIndexSize;
-                        devicePixelRatio = _ref2.devicePixelRatio;
+                        _ref3 = context$2$0.sent;
+                        contentFullSize = _ref3.contentFullSize;
+                        maxIndexSize = _ref3.maxIndexSize;
+                        devicePixelRatio = _ref3.devicePixelRatio;
 
-                        this._setDevicePixelRatio(devicePixelRatio);
+                        this._setDevicePixelRatio(this.overWriteDevicePixelRatio || devicePixelRatio);
                         canvas = this._makeCanvas({ contentFullSize: contentFullSize });
                         context = canvas.getContext('2d');
                         context$2$0.next = 13;
                         return Array(maxIndexSize).join(',').split(',').reduce(function (base, _, index) {
                             return base.then(function () {
                                 return _this._sendMessage(tab, { 'type': 'doScroll', index: index });
-                            }).then(function (_ref3) {
-                                var top = _ref3.top;
-                                var left = _ref3.left;
-
-                                return _this._sleep(150).then(function () {
-                                    return { top: top, left: left };
-                                });
                             }).then(function (_ref4) {
                                 var top = _ref4.top;
                                 var left = _ref4.left;
 
+                                return _this._sleep(150).then(function () {
+                                    return { top: top, left: left };
+                                });
+                            }).then(function (_ref5) {
+                                var top = _ref5.top;
+                                var left = _ref5.left;
+
                                 return _this._doCapture(tab).then(function (dataURI) {
                                     return { dataURI: dataURI, top: top, left: left };
                                 });
-                            }).then(function (_ref5) {
-                                var dataURI = _ref5.dataURI;
-                                var top = _ref5.top;
-                                var left = _ref5.left;
+                            }).then(function (_ref6) {
+                                var dataURI = _ref6.dataURI;
+                                var top = _ref6.top;
+                                var left = _ref6.left;
 
                                 return _this._drawImage({ context: context, dataURI: dataURI, left: left, top: top });
                             });
@@ -8950,8 +8957,8 @@ var captureVisibleTabFull = (function () {
         }
     }, {
         key: '_makeCanvas',
-        value: function _makeCanvas(_ref6) {
-            var contentFullSize = _ref6.contentFullSize;
+        value: function _makeCanvas(_ref7) {
+            var contentFullSize = _ref7.contentFullSize;
 
             var canvas = document.createElement('canvas');
             canvas.width = this._changeScale(contentFullSize.width);
@@ -8988,13 +8995,13 @@ var captureVisibleTabFull = (function () {
         }
     }, {
         key: '_drawImage',
-        value: function _drawImage(_ref7) {
+        value: function _drawImage(_ref8) {
             var _this2 = this;
 
-            var context = _ref7.context;
-            var dataURI = _ref7.dataURI;
-            var left = _ref7.left;
-            var top = _ref7.top;
+            var context = _ref8.context;
+            var dataURI = _ref8.dataURI;
+            var left = _ref8.left;
+            var top = _ref8.top;
 
             return new _bluebird2['default'](function (resolve) {
                 console.assert('string' === typeof dataURI);
@@ -9031,8 +9038,8 @@ function contentScript() {
     })();
 
     var BasePosition = (function () {
-        function BasePosition(_ref8) {
-            var global = _ref8.global;
+        function BasePosition(_ref9) {
+            var global = _ref9.global;
 
             _classCallCheck(this, BasePosition);
 
@@ -9056,10 +9063,10 @@ function contentScript() {
     })();
 
     var ContentSize = (function () {
-        function ContentSize(_ref9) {
-            var global = _ref9.global;
-            var _ref9$padding = _ref9.padding;
-            var padding = _ref9$padding === undefined ? 200 : _ref9$padding;
+        function ContentSize(_ref10) {
+            var global = _ref10.global;
+            var _ref10$padding = _ref10.padding;
+            var padding = _ref10$padding === undefined ? 200 : _ref10$padding;
 
             _classCallCheck(this, ContentSize);
 
@@ -9108,8 +9115,8 @@ function contentScript() {
     })();
 
     var Scroller = (function () {
-        function Scroller(_ref10) {
-            var global = _ref10.global;
+        function Scroller(_ref11) {
+            var global = _ref11.global;
 
             _classCallCheck(this, Scroller);
 
@@ -9169,8 +9176,8 @@ function contentScript() {
     var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
     var TypeCommands = {
         'context': {},
-        ready: function ready(_ref11) {
-            var request = _ref11.request;
+        ready: function ready(_ref12) {
+            var request = _ref12.request;
 
             this.context = {};
             this.context.scroller = new Scroller({ global: global });
@@ -9181,8 +9188,8 @@ function contentScript() {
                 'devicePixelRatio': global.devicePixelRatio || 1
             };
         },
-        doScroll: function doScroll(_ref12) {
-            var request = _ref12.request;
+        doScroll: function doScroll(_ref13) {
+            var request = _ref13.request;
             var index = request.index;
 
             var result = this.context.scroller.doScroll(index);
@@ -9193,8 +9200,8 @@ function contentScript() {
                 'top': result[1]
             };
         },
-        done: function done(_ref13) {
-            var request = _ref13.request;
+        done: function done(_ref14) {
+            var request = _ref14.request;
 
             this.context.scroller.destroy();
             this.context = {};
@@ -9994,11 +10001,12 @@ var _CaptureVisibleTab2 = _interopRequireDefault(_CaptureVisibleTab);
 var _ = (function () {
     function _(_ref) {
         var tabs = _ref.tabs;
+        var overWriteDevicePixelRatio = _ref.overWriteDevicePixelRatio;
 
         _classCallCheck(this, _);
 
         this.tabs = tabs;
-        this.captureVisibleTab = new _CaptureVisibleTab2['default']();
+        this.captureVisibleTab = new _CaptureVisibleTab2['default']({ overWriteDevicePixelRatio: overWriteDevicePixelRatio });
     }
 
     _createClass(_, [{

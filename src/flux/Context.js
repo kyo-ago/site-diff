@@ -10,4 +10,10 @@ export default class _ extends Context {
         	'renderingImages': new RenderingImages(this),
         };
     }
+    canExecute({name}) {
+        return 'function' === typeof this.actions[name];
+    }
+    executeMessage({message}) {
+
+    }
 }
