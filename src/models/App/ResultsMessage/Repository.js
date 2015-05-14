@@ -3,7 +3,7 @@ import Model from './Model';
 export default class Repository {
     serialize({message}) {
         return {
-            'type': Model.type,
+            'type': message['type'],
             'data': message['data']
         };
     }
