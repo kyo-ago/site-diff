@@ -11,7 +11,7 @@ export default class Service {
     }
     async sendResultMessage({tab, serializedData}) {
         let message = {
-            'type': 'results',
+            'type': 'doRender',
             'data': serializedData
         };
         return this.tabs.sendMessage(tab.id, message);

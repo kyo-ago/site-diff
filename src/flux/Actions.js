@@ -1,14 +1,19 @@
 import {Action} from 'material-flux';
 
 export const keys = {
-    'doLoadURLs': 'doLoadURLs',
-    'renderingImages': 'renderingImages'
+    'result': 'result',
+    'doRender': 'doRender'
 };
-export default class _ extends Action {
+export default class Actions extends Action {
     constructor(context) {
         super(context);
     }
-    doLoadURLs(urls) {
-        chrome.runtime.sendMessage({type: 'doCaptures', urls});
+    result({message}) {
+        this.dispatch(keys.result, message);
+    }
+    doRender({message}) {
+        console.assert(message['type'] === 'resultsMessage');
+        console.assert(Array.isArray(message['data']));
+        this.dispatch(keys.doRender, message['data']);
     }
 }
