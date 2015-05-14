@@ -2,7 +2,7 @@ import Actions from './Actions';
 import StoreResult from './stores/Result';
 import {Context} from 'material-flux';
 
-export default class Context extends Context {
+export default class _ extends Context {
     constructor() {
         super();
         this.actions = new Actions(this);
