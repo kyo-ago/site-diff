@@ -50,10 +50,29 @@ var execCapture = function execCapture(_ref) {
     }, null, _this);
 };
 
-var openResults = function openResults(_ref2) {
-    var tab = _ref2.tab;
-    var tabsModel = _ref2.tabsModel;
+var saveResults = function saveResults(_ref2) {
     var captureModels = _ref2.captureModels;
+    return regeneratorRuntime.async(function saveResults$(context$1$0) {
+        while (1) switch (context$1$0.prev = context$1$0.next) {
+            case 0:
+                context$1$0.next = 2;
+                return resultsRepository.diffCapture({ storageModel: storageModel, captureModels: captureModels });
+
+            case 2:
+                context$1$0.next = 4;
+                return resultsRepository.saveFirstCapture({ storageModel: storageModel, captureModels: captureModels });
+
+            case 4:
+            case 'end':
+                return context$1$0.stop();
+        }
+    }, null, _this);
+};
+
+var openResults = function openResults(_ref3) {
+    var tab = _ref3.tab;
+    var tabsModel = _ref3.tabsModel;
+    var captureModels = _ref3.captureModels;
     var resultsService, serializedData, result;
     return regeneratorRuntime.async(function openResults$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -79,9 +98,9 @@ var openResults = function openResults(_ref2) {
     }, null, _this);
 };
 
-chrome.runtime.onMessage.addListener(function callee$0$0(_ref3) {
-    var type = _ref3.type;
-    var urls = _ref3.urls;
+chrome.runtime.onMessage.addListener(function callee$0$0(_ref4) {
+    var type = _ref4.type;
+    var urls = _ref4.urls;
     var tabsModel, tab, captureModels;
     return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
@@ -106,9 +125,13 @@ chrome.runtime.onMessage.addListener(function callee$0$0(_ref3) {
             case 8:
                 captureModels = context$1$0.sent;
                 context$1$0.next = 11;
-                return openResults({ tab: tab, tabsModel: tabsModel, captureModels: captureModels });
+                return saveResults({ captureModels: captureModels });
 
             case 11:
+                context$1$0.next = 13;
+                return openResults({ tab: tab, tabsModel: tabsModel, captureModels: captureModels });
+
+            case 13:
             case 'end':
                 return context$1$0.stop();
         }

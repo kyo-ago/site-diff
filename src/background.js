@@ -17,7 +17,12 @@ let execCapture = async ({tab, tabsModel, urls}) => {
     return captureModels;
 };
 
-let openResults = async ({tab, tabsModel, captureModels}) => {
+let saveResults = async({captureModels}) => {
+    await resultsRepository.diffCapture({storageModel, captureModels});
+    await resultsRepository.saveFirstCapture({storageModel, captureModels});
+};
+
+let openResults = async({tab, tabsModel, captureModels}) => {
     let resultsService = new ResultsService({'tabs': tabsModel});
     await resultsService.updateTab({tab, 'path': 'html/capture_result.html'});
     let serializedData = resultsRepository.serialize({captureModels});
@@ -32,5 +37,6 @@ chrome.runtime.onMessage.addListener(async ({type, urls}) => {
     let tabsModel = new TabsModel();
     let tab = await tabsModel.createActive();
     let captureModels = await execCapture({tab, tabsModel, urls});
+    await saveResults({captureModels});
     await openResults({tab, tabsModel, captureModels});
 });
