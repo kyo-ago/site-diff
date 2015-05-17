@@ -4,7 +4,7 @@ import {Store} from 'material-flux';
 export default class Render extends Store {
     constructor(context) {
         super(context);
-        this.register(keys.doResult, this.onHandler);
+        this.register(keys.doRender, this.onHandler);
         this.state = {
             data: {}
         };

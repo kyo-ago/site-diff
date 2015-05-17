@@ -2,20 +2,20 @@ import React from 'react';
 export default class Result extends React.Component {
     constructor(props) {
         super(props);
-        this.resultStore = this.props.context.store.result;
+        this.renderStore = this.props.context.store.render;
         this.state = {
-            data: this.resultStore.getData()
+            data: this.renderStore.getData()
         };
     }
 
     _onChange() {
         this.setState({
-            data: this.resultStore.getUserData()
+            data: this.renderStore.getData()
         });
     }
 
     componentDidMount() {
-        this.resultStore.onChange(this._onChange.bind(this));
+        this.renderStore.onChange(this._onChange.bind(this));
 
         var { context } = this.props;
         context.actions.result({
@@ -24,11 +24,10 @@ export default class Result extends React.Component {
     }
 
     componentWillUnmount() {
-        this.resultStore.removeAllChangeListeners();
+        this.renderStore.removeAllChangeListeners();
     }
 
     render() {
-        console.log(this.state.data);
         return (
             <div>
                 userData: {this.state.data}
