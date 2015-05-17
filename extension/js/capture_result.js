@@ -30873,11 +30873,14 @@ var Result = (function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var items = this.state.data.map(function (_ref) {
+                var blobURL = _ref.blobURL;
+                return _React2['default'].createElement('img', { src: blobURL });
+            });
             return _React2['default'].createElement(
                 'div',
                 null,
-                'userData: ',
-                this.state.data
+                items
             );
         }
     }]);
@@ -30914,7 +30917,7 @@ var Render = (function (_Store) {
         _get(Object.getPrototypeOf(Render.prototype), 'constructor', this).call(this, context);
         this.register(_keys.keys.doRender, this.onHandler);
         this.state = {
-            data: {}
+            data: []
         };
     }
 

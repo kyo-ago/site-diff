@@ -6,7 +6,7 @@ export default class Render extends Store {
         super(context);
         this.register(keys.doRender, this.onHandler);
         this.state = {
-            data: {}
+            data: []
         };
     }
     onHandler(data) {

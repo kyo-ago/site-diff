@@ -8,20 +8,18 @@ import ResultsRepository from './models/Domain/Results/Repository';
 let storageModel = new StorageModel();
 let resultsRepository = new ResultsRepository({'storage': storageModel});
 
-let execCapture = async ({tabsModel, urls}) => {
+let execCapture = async ({tab, tabsModel, urls}) => {
     let capture = new CaptureService({
         'tabs': tabsModel,
         'overWriteDevicePixelRatio': 1
     });
-    let tab = await tabsModel.createActive();
     let captureModels = await capture.doCaptures({tab, urls});
-    await tabsModel.remove(tab.id);
     return captureModels;
 };
 
-let openResults = async ({tabsModel, captureModels}) => {
+let openResults = async ({tab, tabsModel, captureModels}) => {
     let resultsService = new ResultsService({'tabs': tabsModel});
-    let tab = await resultsService.createTab({'path': 'html/capture_result.html'});
+    await resultsService.updateTab({tab, 'path': 'html/capture_result.html'});
     let serializedData = resultsRepository.serialize({captureModels});
     let result = await resultsService.sendResultMessage({tab, serializedData});
     resultsRepository.revokeSerialize({serializedData});
@@ -32,6 +30,7 @@ chrome.runtime.onMessage.addListener(async ({type, urls}) => {
         return;
     }
     let tabsModel = new TabsModel();
-    let captureModels = await execCapture({tabsModel, urls});
-    await openResults({tabsModel, captureModels});
+    let tab = await tabsModel.createActive();
+    let captureModels = await execCapture({tab, tabsModel, urls});
+    await openResults({tab, tabsModel, captureModels});
 });

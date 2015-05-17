@@ -1,4 +1,5 @@
 import React from 'react';
+
 export default class Result extends React.Component {
     constructor(props) {
         super(props);
@@ -28,9 +29,10 @@ export default class Result extends React.Component {
     }
 
     render() {
+        let items = this.state.data.map(({blobURL}) => <img src={blobURL} />);
         return (
             <div>
-                userData: {this.state.data}
+                {items}
             </div>
         );
 }

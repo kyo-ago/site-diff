@@ -25,9 +25,10 @@ var storageModel = new _TabsModel$StorageModel.storage();
 var resultsRepository = new _ResultsRepository2['default']({ storage: storageModel });
 
 var execCapture = function execCapture(_ref) {
+    var tab = _ref.tab;
     var tabsModel = _ref.tabsModel;
     var urls = _ref.urls;
-    var capture, tab, captureModels;
+    var capture, captureModels;
     return regeneratorRuntime.async(function execCapture$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
@@ -36,22 +37,13 @@ var execCapture = function execCapture(_ref) {
                     overWriteDevicePixelRatio: 1
                 });
                 context$1$0.next = 3;
-                return tabsModel.createActive();
-
-            case 3:
-                tab = context$1$0.sent;
-                context$1$0.next = 6;
                 return capture.doCaptures({ tab: tab, urls: urls });
 
-            case 6:
+            case 3:
                 captureModels = context$1$0.sent;
-                context$1$0.next = 9;
-                return tabsModel.remove(tab.id);
-
-            case 9:
                 return context$1$0.abrupt('return', captureModels);
 
-            case 10:
+            case 5:
             case 'end':
                 return context$1$0.stop();
         }
@@ -59,28 +51,28 @@ var execCapture = function execCapture(_ref) {
 };
 
 var openResults = function openResults(_ref2) {
+    var tab = _ref2.tab;
     var tabsModel = _ref2.tabsModel;
     var captureModels = _ref2.captureModels;
-    var resultsService, tab, serializedData, result;
+    var resultsService, serializedData, result;
     return regeneratorRuntime.async(function openResults$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
                 resultsService = new _ResultsService2['default']({ tabs: tabsModel });
                 context$1$0.next = 3;
-                return resultsService.createTab({ path: 'html/capture_result.html' });
+                return resultsService.updateTab({ tab: tab, path: 'html/capture_result.html' });
 
             case 3:
-                tab = context$1$0.sent;
                 serializedData = resultsRepository.serialize({ captureModels: captureModels });
-                context$1$0.next = 7;
+                context$1$0.next = 6;
                 return resultsService.sendResultMessage({ tab: tab, serializedData: serializedData });
 
-            case 7:
+            case 6:
                 result = context$1$0.sent;
 
                 resultsRepository.revokeSerialize({ serializedData: serializedData });
 
-            case 9:
+            case 8:
             case 'end':
                 return context$1$0.stop();
         }
@@ -90,7 +82,7 @@ var openResults = function openResults(_ref2) {
 chrome.runtime.onMessage.addListener(function callee$0$0(_ref3) {
     var type = _ref3.type;
     var urls = _ref3.urls;
-    var tabsModel, captureModels;
+    var tabsModel, tab, captureModels;
     return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
@@ -104,14 +96,19 @@ chrome.runtime.onMessage.addListener(function callee$0$0(_ref3) {
             case 2:
                 tabsModel = new _TabsModel$StorageModel.tabs();
                 context$1$0.next = 5;
-                return execCapture({ tabsModel: tabsModel, urls: urls });
+                return tabsModel.createActive();
 
             case 5:
-                captureModels = context$1$0.sent;
+                tab = context$1$0.sent;
                 context$1$0.next = 8;
-                return openResults({ tabsModel: tabsModel, captureModels: captureModels });
+                return execCapture({ tab: tab, tabsModel: tabsModel, urls: urls });
 
             case 8:
+                captureModels = context$1$0.sent;
+                context$1$0.next = 11;
+                return openResults({ tab: tab, tabsModel: tabsModel, captureModels: captureModels });
+
+            case 11:
             case 'end':
                 return context$1$0.stop();
         }
@@ -8627,13 +8624,13 @@ var _ = (function () {
             return this.create(prop);
         }
     }, {
-        key: 'openInnerPage',
-        value: function openInnerPage(path) {
-            var createProperties = arguments[1] === undefined ? {} : arguments[1];
+        key: 'updateInnerPage',
+        value: function updateInnerPage(tabId, path) {
+            var createProperties = arguments[2] === undefined ? {} : arguments[2];
 
             var url = chrome.extension.getURL(path);
             var prop = Object.assign(createProperties, { url: url });
-            return this.createActive(prop);
+            return this.update(tabId, prop);
         }
     }, {
         key: 'remove',
@@ -15215,25 +15212,21 @@ var Service = (function () {
     }
 
     _createClass(Service, [{
-        key: 'createTab',
-        value: function createTab(_ref2) {
+        key: 'updateTab',
+        value: function updateTab(_ref2) {
+            var tab = _ref2.tab;
             var path = _ref2.path;
-            var tab;
-            return regeneratorRuntime.async(function createTab$(context$2$0) {
+            return regeneratorRuntime.async(function updateTab$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return this.tabs.openInnerPage(path);
+                        return this.tabs.updateInnerPage(tab.id, path);
 
                     case 2:
-                        tab = context$2$0.sent;
-                        context$2$0.next = 5;
+                        context$2$0.next = 4;
                         return this.tabs.waitComplete(tab.id);
 
-                    case 5:
-                        return context$2$0.abrupt('return', tab);
-
-                    case 6:
+                    case 4:
                     case 'end':
                         return context$2$0.stop();
                 }
@@ -15252,9 +15245,11 @@ var Service = (function () {
                             type: 'doRender',
                             data: serializedData
                         };
+
+                        console.log(JSON.stringify(message));
                         return context$2$0.abrupt('return', this.tabs.sendMessage(tab.id, message));
 
-                    case 2:
+                    case 3:
                     case 'end':
                         return context$2$0.stop();
                 }
