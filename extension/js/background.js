@@ -22,11 +22,12 @@ var _ResultsRepository = require('./models/Domain/Results/Repository');
 var _ResultsRepository2 = _interopRequireWildcard(_ResultsRepository);
 
 var storageModel = new _TabsModel$StorageModel.storage();
+var tabsModel = new _TabsModel$StorageModel.tabs();
 var resultsRepository = new _ResultsRepository2['default']({ storage: storageModel });
+var resultsService = new _ResultsService2['default']({ tabs: tabsModel, repository: resultsRepository });
 
 var execCapture = function execCapture(_ref) {
     var tab = _ref.tab;
-    var tabsModel = _ref.tabsModel;
     var urls = _ref.urls;
     var capture, captureModels;
     return regeneratorRuntime.async(function execCapture$(context$1$0) {
@@ -56,13 +57,12 @@ var saveResults = function saveResults(_ref2) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
                 context$1$0.next = 2;
-                return resultsRepository.diffCapture({ storageModel: storageModel, captureModels: captureModels });
+                return resultsService.saveResults({ captureModels: captureModels });
 
             case 2:
-                context$1$0.next = 4;
-                return resultsRepository.saveFirstCapture({ storageModel: storageModel, captureModels: captureModels });
+                return context$1$0.abrupt('return', context$1$0.sent);
 
-            case 4:
+            case 3:
             case 'end':
                 return context$1$0.stop();
         }
@@ -71,27 +71,25 @@ var saveResults = function saveResults(_ref2) {
 
 var openResults = function openResults(_ref3) {
     var tab = _ref3.tab;
-    var tabsModel = _ref3.tabsModel;
-    var captureModels = _ref3.captureModels;
-    var resultsService, serializedData, result;
+    var resultModels = _ref3.resultModels;
+    var serializedData, result;
     return regeneratorRuntime.async(function openResults$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
-                resultsService = new _ResultsService2['default']({ tabs: tabsModel });
-                context$1$0.next = 3;
+                context$1$0.next = 2;
                 return resultsService.updateTab({ tab: tab, path: 'html/capture_result.html' });
 
-            case 3:
-                serializedData = resultsRepository.serialize({ captureModels: captureModels });
-                context$1$0.next = 6;
+            case 2:
+                serializedData = resultsRepository.serialize({ resultModels: resultModels });
+                context$1$0.next = 5;
                 return resultsService.sendResultMessage({ tab: tab, serializedData: serializedData });
 
-            case 6:
+            case 5:
                 result = context$1$0.sent;
 
                 resultsRepository.revokeSerialize({ serializedData: serializedData });
 
-            case 8:
+            case 7:
             case 'end':
                 return context$1$0.stop();
         }
@@ -101,7 +99,7 @@ var openResults = function openResults(_ref3) {
 chrome.runtime.onMessage.addListener(function callee$0$0(_ref4) {
     var type = _ref4.type;
     var urls = _ref4.urls;
-    var tabsModel, tab, captureModels;
+    var tab, captureModels, resultModels;
     return regeneratorRuntime.async(function callee$0$0$(context$1$0) {
         while (1) switch (context$1$0.prev = context$1$0.next) {
             case 0:
@@ -113,23 +111,23 @@ chrome.runtime.onMessage.addListener(function callee$0$0(_ref4) {
                 return context$1$0.abrupt('return');
 
             case 2:
-                tabsModel = new _TabsModel$StorageModel.tabs();
-                context$1$0.next = 5;
+                context$1$0.next = 4;
                 return tabsModel.createActive();
 
-            case 5:
+            case 4:
                 tab = context$1$0.sent;
-                context$1$0.next = 8;
+                context$1$0.next = 7;
                 return execCapture({ tab: tab, tabsModel: tabsModel, urls: urls });
 
-            case 8:
+            case 7:
                 captureModels = context$1$0.sent;
-                context$1$0.next = 11;
+                context$1$0.next = 10;
                 return saveResults({ captureModels: captureModels });
 
-            case 11:
+            case 10:
+                resultModels = context$1$0.sent;
                 context$1$0.next = 13;
-                return openResults({ tab: tab, tabsModel: tabsModel, captureModels: captureModels });
+                return openResults({ tab: tab, resultModels: resultModels });
 
             case 13:
             case 'end':
@@ -15228,10 +15226,12 @@ var _Model2 = _interopRequireWildcard(_Model);
 var Service = (function () {
     function Service(_ref) {
         var tabs = _ref.tabs;
+        var repository = _ref.repository;
 
         _classCallCheck(this, Service);
 
         this.tabs = tabs;
+        this.repository = repository;
     }
 
     _createClass(Service, [{
@@ -15273,6 +15273,30 @@ var Service = (function () {
                         return context$2$0.abrupt('return', this.tabs.sendMessage(tab.id, message));
 
                     case 3:
+                    case 'end':
+                        return context$2$0.stop();
+                }
+            }, null, this);
+        }
+    }, {
+        key: 'saveResults',
+        value: function saveResults(_ref4) {
+            var captureModels = _ref4.captureModels;
+            var oldCaptures;
+            return regeneratorRuntime.async(function saveResults$(context$2$0) {
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                    case 0:
+                        context$2$0.next = 2;
+                        return this.repository.getOldCaptures();
+
+                    case 2:
+                        oldCaptures = context$2$0.sent;
+
+                        oldCaptures.getCaptures().map(function (capture) {
+                            captureModels.filter(function () {});
+                        });
+
+                    case 4:
                     case 'end':
                         return context$2$0.stop();
                 }

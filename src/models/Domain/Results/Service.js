@@ -1,8 +1,9 @@
 import Model from './Model';
 
 export default class Service {
-    constructor({tabs}) {
+    constructor({tabs, repository}) {
         this.tabs = tabs;
+        this.repository = repository;
     }
     async updateTab({tab, path}) {
         await this.tabs.updateInnerPage(tab.id, path);
@@ -15,5 +16,12 @@ export default class Service {
         };
         console.log(JSON.stringify(message));
         return this.tabs.sendMessage(tab.id, message);
+    }
+    async saveResults({captureModels}) {
+        let oldCaptures =  await this.repository.getOldCaptures();
+        oldCaptures.getCaptures().map((capture) => {
+            captureModels.filter(() => {})
+
+        });
     }
 }
