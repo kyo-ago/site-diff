@@ -15,11 +15,13 @@
   "dependencies": {
     "babel-core": "^5.1.13",
     "bluebird": "^2.9.24",
-    "chrome-extension-api-promise": "",
+    "chrome-extension-api-promise": "git+https://github.com/kyo-ago/chrome-extension-api-promise.git",
     "chrome-tab-capture-visible-tab-full": "0.0.5",
+    "filer.js": "git+https://github.com/kyo-ago/filer.js.git",
     "material-flux": "^1.2.0",
     "monapt": "^0.3.8",
     "react": "^0.13.2",
+    "UUID": "git+https://github.com/kyo-ago/UUID.git",
     "resemblejs": "git+https://github.com/kyo-ago/Resemble.js.git"
   },
   "devDependencies": {

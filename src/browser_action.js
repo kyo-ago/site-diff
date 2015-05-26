@@ -2,7 +2,7 @@ let handler = (event) => {
     let text = event.target.value;
     let urls = text.split('\n').filter((_) => _).map((url) => {
         try {
-            return new URL(url.trim());
+            return new URL(url.trim()).href;
         } catch (e) {}
     });
     if (!urls.length) {

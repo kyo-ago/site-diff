@@ -7,7 +7,7 @@ var handler = function handler(event) {
         return _;
     }).map(function (url) {
         try {
-            return new URL(url.trim());
+            return new URL(url.trim()).href;
         } catch (e) {}
     });
     if (!urls.length) {
