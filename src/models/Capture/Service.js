@@ -6,8 +6,7 @@ import URLListRepository from '../URLList/Repository';
 import CaptureVisibleTab from 'chrome-tab-capture-visible-tab-full';
 
 export default class Service {
-    constructor({urls}) {
-        this.urls = urls;
+    constructor() {
         this.tabAPI = new TabAPI();
         this.storageAPI = new StorageAPI();
         this.captureVisibleTab = new CaptureVisibleTab({
@@ -25,7 +24,7 @@ export default class Service {
         });
     }
     async getTab() {
-        return await this.tabsModel.createActive();
+        return await this.tabAPI.createActive();
     }
     async doCapture({ tab, urls }) {
         let urlListService = new URLListService({
@@ -46,7 +45,6 @@ export default class Service {
         let path = 'html/capture_result.html';
         await this.tabAPI.updateInnerPage(tab.id, path);
         await this.tabAPI.waitComplete(tab.id);
-        debugger;
         await this.tabAPI.sendMessage(tab.id, {
             'type': 'CaptureResults',
             'model': model

@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(function callee$0$0(_ref) {
                 return context$1$0.abrupt('return');
 
             case 2:
-                service = (0, _modelsCaptureService2['default'])();
+                service = new _modelsCaptureService2['default']();
                 context$1$0.next = 5;
                 return service.init();
 
@@ -9227,23 +9227,801 @@ function contentScript() {
 module.exports = exports['default'];
 
 },{"bluebird":97}],99:[function(require,module,exports){
-var self=this;self.URL=self.URL||self.webkitURL;self.requestFileSystem=self.requestFileSystem||self.webkitRequestFileSystem;self.resolveLocalFileSystemURL=self.resolveLocalFileSystemURL||self.webkitResolveLocalFileSystemURL;navigator.temporaryStorage=navigator.temporaryStorage||navigator.webkitTemporaryStorage;navigator.persistentStorage=navigator.persistentStorage||navigator.webkitPersistentStorage;self.BlobBuilder=self.BlobBuilder||self.MozBlobBuilder||self.WebKitBlobBuilder;
-if(void 0===self.FileError){var FileError=function(){};FileError.prototype.prototype=Error.prototype}
-var Util={toArray:function(a){return Array.prototype.slice.call(a||[],0)},strToDataURL:function(a,b,c){return(void 0!=c?c:1)?"data:"+b+";base64,"+self.btoa(a):"data:"+b+","+a},strToObjectURL:function(a,b){for(var c=new Uint8Array(a.length),e=0;e<c.length;++e)c[e]=a.charCodeAt(e);c=new Blob([c],b?{type:b}:{});return self.URL.createObjectURL(c)},fileToObjectURL:function(a){return self.URL.createObjectURL(a)},fileToArrayBuffer:function(a,b,c){var e=new FileReader;e.onload=function(a){b(a.target.result)};
-e.onerror=function(a){c&&c(a)};e.readAsArrayBuffer(a)},dataURLToBlob:function(a){if(-1==a.indexOf(";base64,")){var b=a.split(","),a=b[0].split(":")[1],b=decodeURIComponent(b[1]);return new Blob([b],{type:a})}for(var b=a.split(";base64,"),a=b[0].split(":")[1],b=window.atob(b[1]),c=b.length,e=new Uint8Array(c),h=0;h<c;++h)e[h]=b.charCodeAt(h);return new Blob([e],{type:a})},arrayBufferToBlob:function(a,b){var c=new Uint8Array(a);return new Blob([c],b?{type:b}:{})},arrayBufferToBinaryString:function(a,
-b,c){var e=new FileReader;e.onload=function(a){b(a.target.result)};e.onerror=function(a){c&&c(a)};a=new Uint8Array(a);e.readAsBinaryString(new Blob([a]))},arrayToBinaryString:function(a){if("object"!=typeof a)return null;for(var b=a.length,c=Array(b);b--;)c[b]=String.fromCharCode(a[b]);return c.join("")},getFileExtension:function(a){var b=a.lastIndexOf(".");return-1!=b?a.substring(b):""}},MyFileError=function(a){this.prototype=FileError.prototype;this.code=a.code;this.name=a.name};
-FileError.BROWSER_NOT_SUPPORTED=1E3;FileError.prototype.__defineGetter__("name",function(){for(var a=Object.keys(FileError),b=0,c;c=a[b];++b)if(FileError[c]==this.code)return c;return"Unknown Error"});
-var Filer=new function(){function a(d){if(b=d||null)c=b.root,e=!0}var b=null,c=null,e=!1,h=function(d){return 0==d.indexOf("filesystem:")},l=function(d){h(d)||(d="/"==d[0]?b.root.toURL()+d.substring(1):0==d.indexOf("./")||0==d.indexOf("../")?"../"==d&&c!=b.root?c.toURL()+"/"+d:c.toURL()+d:c.toURL()+"/"+d);return d},k=function(d,a){var b=arguments[1],c=arguments[2],g=function(d){if(d.code==FileError.NOT_FOUND_ERR){if(c)throw Error('"'+b+'" or "'+c+'" does not exist.');throw Error('"'+b+'" does not exist.');
-}throw Error("Problem getting Entry for one or more paths.");},j=l(b);if(3==arguments.length){var i=l(c);self.resolveLocalFileSystemURL(j,function(a){self.resolveLocalFileSystemURL(i,function(b){d(a,b)},g)},g)}else self.resolveLocalFileSystemURL(j,d,g)},n=function(d,a,c,f,g,j){if(!b)throw Error("Filesystem has not been initialized.");if(typeof d!=typeof a)throw Error("These method arguments are not supported.");var i=c||null,e=void 0!=j?j:!1;(d.isFile||a.isDirectory)&&a.isDirectory?e?d.moveTo(a,i,
-f,g):d.copyTo(a,i,f,g):k(function(a,d){if(d.isDirectory)e?a.moveTo(d,i,f,g):a.copyTo(d,i,f,g);else{var b=Error('Oops! "'+d.name+" is not a directory!");if(g)g(b);else throw b;}},d,a)};a.DEFAULT_FS_SIZE=1048576;a.version="0.4.3";a.prototype={get fs(){return b},get isOpen(){return e},get cwd(){return c}};a.prototype.pathToFilesystemURL=function(d){return l(d)};a.prototype.init=function(d){if(!self.requestFileSystem)throw new MyFileError({code:FileError.BROWSER_NOT_SUPPORTED,name:"BROWSER_NOT_SUPPORTED"});
-return new Promise(function(a,m){var f=d?d:{},g=f.size||1048576;this.type=self.TEMPORARY;if("persistent"in f&&f.persistent)this.type=self.PERSISTENT;var j=function(d){this.size=g;b=d;c=b.root;e=!0;a(d)};this.type==self.PERSISTENT&&navigator.persistentStorage?navigator.persistentStorage.requestQuota(g,function(d){self.requestFileSystem(this.type,d,j.bind(this),m)}.bind(this),m):self.requestFileSystem(this.type,g,j.bind(this),m)}.bind(this))};a.prototype.ls=function(d){if(!b)throw Error("Filesystem has not been initialized.");
-return new Promise(function(a,b){var f=function(d){c=d;var f=[],e=c.createReader(),h=function(){e.readEntries(function(d){d.length?(f=f.concat(Util.toArray(d)),h()):(f.sort(function(d,a){return d.name<a.name?-1:a.name<d.name?1:0}),a(f))},b)};h()};d.isDirectory?f(d):h(d)?k(f,d):c.getDirectory(d,{},f,b)}.bind(this))};a.prototype.mkdir=function(d,a){if(!b)throw Error("Filesystem has not been initialized.");return new Promise(function(b,f){var g=null!=a?a:!1,e=d.split("/"),i=function(a,c){if("."==c[0]||
-""==c[0])c=c.slice(1);a.getDirectory(c[0],{create:!0,exclusive:g},function(a){a.isDirectory?c.length&&1!=e.length?i(a,c.slice(1)):b(a):f(Error(d+" is not a directory"))},function(a){if(a.code==FileError.INVALID_MODIFICATION_ERR)a.message="'"+d+"' already exists",f(a)})};i(c,e)}.bind(this))};a.prototype.open=function(a){if(!b)throw Error("Filesystem has not been initialized.");return new Promise(function(b,c){a.isFile?a.file(b,c):k(function(a){a.file(b,c)},l(a))}.bind(this))};a.prototype.create=function(a,
-e){if(!b)throw Error("Filesystem has not been initialized.");return new Promise(function(b,f){c.getFile(a,{create:!0,exclusive:null!=e?e:!0},b,function(b){if(b.code==FileError.INVALID_MODIFICATION_ERR)b.message="'"+a+"' already exists";f(b)})}.bind(this))};a.prototype.mv=function(a,b,c){return new Promise(function(f,g){n.bind(this,a,b,c,f,g,!0)()}.bind(this))};a.prototype.rm=function(a){if(!b)throw Error("Filesystem has not been initialized.");return new Promise(function(b,c){var f=function(a){a.isFile?
-a.remove(b,c):a.isDirectory&&a.removeRecursively(b,c)};a.isFile||a.isDirectory?f(a):k(f,a)}.bind(this))};a.prototype.cd=function(a){if(!b)throw Error("Filesystem has not been initialized.");return new Promise(function(b,e){a.isDirectory?(c=a,b(c)):(a=l(a),k(function(a){a.isDirectory?(c=a,b(c)):e(Error("Path was not a directory."))},a))}.bind(this))};a.prototype.cp=function(a,b,c){return new Promise(function(f,e){n.bind(this,a,b,c,f,e)()}.bind(this))};a.prototype.write=function(a,e){if(!b)throw Error("Filesystem has not been initialized.");
-return new Promise(function(b,f){var g=function(a){a.createWriter(function(c){c.onerror=f;if(e.append)c.onwriteend=function(){b([a,this])},c.seek(c.length);else{var d=!1;c.onwriteend=function(){d?b([a,this]):(d=!0,this.truncate(this.position))}}if(e.data.__proto__==ArrayBuffer.prototype)e.data=new Uint8Array(e.data);var g=new Blob([e.data],e.type?{type:e.type}:{});c.write(g)},f)};a.isFile?g(a):h(a)?k(g,a):c.getFile(a,{create:!0,exclusive:!1},g,f)}.bind(this))};a.prototype.df=function(){if(!navigator.temporaryStorage.queryUsageAndQuota||
-!navigator.persistentStorage.queryUsageAndQuota)throw Error("Not implemented.");return new Promise(function(a,b){var c=function(b,c){a([b,c-b,c])};self.TEMPORARY==this.type?navigator.temporaryStorage.queryUsageAndQuota(c,b):self.PERSISTENT==this.type&&navigator.persistentStorage.queryUsageAndQuota(c,b)}.bind(this))};return a};module.exports=Filer;
+(function (global){
+/** 
+ * Copyright 2013 - Eric Bidelman
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ 
+ * @fileoverview
+ * Convenient wrapper library for the HTML5 Filesystem API, implementing
+ * familiar UNIX commands (cp, mv, ls) for its API.
+ * 
+ * @author Eric Bidelman (ebidel@gmail.com)
+ * @version: 0.4.3
+ */
 
+'use strict';
+
+var self = (
+    "undefined" !== typeof window ? window
+        : "undefined" !== typeof global ? global
+        : "undefined" !== typeof self ? self
+        : {}
+); // window or worker context.
+
+self.URL = self.URL || self.webkitURL;
+self.requestFileSystem = self.requestFileSystem || self.webkitRequestFileSystem;
+self.resolveLocalFileSystemURL = self.resolveLocalFileSystemURL ||
+                                 self.webkitResolveLocalFileSystemURL;
+navigator.temporaryStorage = navigator.temporaryStorage ||
+                             navigator.webkitTemporaryStorage;
+navigator.persistentStorage = navigator.persistentStorage ||
+                              navigator.webkitPersistentStorage;
+self.BlobBuilder = self.BlobBuilder || self.MozBlobBuilder ||
+                   self.WebKitBlobBuilder;
+
+// Prevent errors in browsers that don't support FileError.
+if (self.FileError === undefined) {
+  self.FileError = function() {};
+  self.FileError.prototype.prototype = Error.prototype;
+}
+
+var Util = {
+
+  /**
+   * Turns a NodeList into an array.
+   *
+   * @param {NodeList} list The array-like object.
+   * @return {Array} The NodeList as an array.
+   */
+  toArray: function(list) {
+    return Array.prototype.slice.call(list || [], 0);
+  },
+
+  /*toDataURL: function(contentType, uint8Array) {
+    return 'data:' + contentType + ';base64,' +
+        self.btoa(this.arrayToBinaryString(uint8Array));
+  },*/
+
+  /**
+   * Creates a data: URL from string data.
+   *
+   * @param {string} str The content to encode the data: URL from.
+   * @param {string} contentType The mimetype of the data str represents.
+   * @param {bool=} opt_isBinary Whether the string data is a binary string
+   *     (and therefore should be base64 encoded). True by default.
+   * @return {string} The created data: URL.
+   */
+  strToDataURL: function(str, contentType, opt_isBinary) {
+    var isBinary = opt_isBinary != undefined ? opt_isBinary : true;
+    if (isBinary) {
+      return 'data:' + contentType + ';base64,' + self.btoa(str);
+    } else {
+      return 'data:' + contentType + ',' + str;
+    }
+  },
+
+  /**
+   * Creates a blob: URL from a binary str.
+   *
+   * @param {string} binStr The content as a binary string.
+   * @param {string=} opt_contentType An optional mimetype of the data.
+   * @return {string} A new blob: URL.
+   */
+  strToObjectURL: function(binStr, opt_contentType) {
+
+    var ui8a = new Uint8Array(binStr.length);
+    for (var i = 0; i < ui8a.length; ++i) { 
+      ui8a[i] = binStr.charCodeAt(i);
+    }
+
+    var blob = new Blob([ui8a],
+                        opt_contentType ? {type: opt_contentType} : {});
+
+    return self.URL.createObjectURL(blob);
+  },
+
+  /**
+   * Creates a blob: URL from a File or Blob object.
+   *
+   * @param {Blob|File} blob The File or Blob data.
+   * @return {string} A new blob: URL.
+   */
+  fileToObjectURL: function(blob) {
+    return self.URL.createObjectURL(blob);
+  },
+
+  /**
+   * Reads a File or Blob object and returns it as an ArrayBuffer.
+   *
+   * @param {Blob|File} blob The File or Blob data.
+   * @param {Function} callback Success callback passed the array buffer.
+   * @param {Function=} opt_error Optional error callback if the read fails.
+   */
+  fileToArrayBuffer: function(blob, callback, opt_errorCallback) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      callback(e.target.result);
+    };
+    reader.onerror = function(e) {
+      if (opt_errorCallback) {
+        opt_errorCallback(e);
+      }
+    };
+
+    reader.readAsArrayBuffer(blob);
+  },
+
+  /**
+   * Creates and returns a blob from a data URL (either base64 encoded or not).
+   *
+   * @param {string} dataURL The data URL to convert.
+   * @return {Blob} A blob representing the array buffer data.
+   */
+  dataURLToBlob: function(dataURL) {
+    var BASE64_MARKER = ';base64,';
+    if (dataURL.indexOf(BASE64_MARKER) == -1) {
+      var parts = dataURL.split(',');
+      var contentType = parts[0].split(':')[1];
+      var raw = decodeURIComponent(parts[1]);
+
+      return new Blob([raw], {type: contentType});
+    }
+
+    var parts = dataURL.split(BASE64_MARKER);
+    var contentType = parts[0].split(':')[1];
+    var raw = window.atob(parts[1]);
+    var rawLength = raw.length;
+
+    var uInt8Array = new Uint8Array(rawLength);
+
+    for (var i = 0; i < rawLength; ++i) {
+      uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], {type: contentType});
+  },
+
+  /**
+   * Reads an ArrayBuffer as returns its contents as a binary string.
+   *
+   * @param {ArrayBuffer} buffer The buffer of data.
+   * @param {string=} opt_contentType An optional mimetype of the data.
+   * @return {Blob} A blob representing the array buffer data.
+   */
+  arrayBufferToBlob: function(buffer, opt_contentType) {
+    var uInt8Array = new Uint8Array(buffer);
+    return new Blob([uInt8Array],
+                    opt_contentType ? {type: opt_contentType} : {});
+  },
+
+  /**
+   * Reads an ArrayBuffer as returns its contents as a binary string.
+   *
+   * @param {ArrayBuffer} buffer The buffer of data.
+   * @param {Function} callback Success callback passed the binary string.
+   * @param {Function=} opt_error Optional error callback if the read fails.
+   */
+  arrayBufferToBinaryString: function(buffer, callback, opt_errorCallback) {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      callback(e.target.result);
+    };
+    reader.onerror = function(e) {
+      if (opt_errorCallback) {
+        opt_errorCallback(e);
+      }
+    };
+
+    var uInt8Array = new Uint8Array(buffer);
+    reader.readAsBinaryString(new Blob([uInt8Array]));
+  },
+
+  /**
+   * Create a binary string out of an array of numbers (bytes), each varying
+   * from 0-255.
+   *
+   * @param {Array} bytes The array of numbers to transform into a binary str.
+   * @return {string} The byte array as a string.
+   */
+  arrayToBinaryString: function(bytes) {
+    if (typeof bytes != typeof []) {
+      return null;
+    }
+    var i = bytes.length;
+    var bstr = new Array(i);
+    while (i--) {
+      bstr[i] = String.fromCharCode(bytes[i]);
+    }
+    return bstr.join('');
+  },
+
+  /**
+   * Returns the file extension for a given filename.
+   *
+   * @param {string} filename The filename.
+   * @return {string} The file's extension.
+   */
+  getFileExtension: function(filename) {
+    var idx = filename.lastIndexOf('.');
+    return idx != -1 ? filename.substring(idx) : '';
+  }
+};
+
+
+var MyFileError = function(obj) {
+  this.prototype = self.FileError.prototype;
+  this.code = obj.code;
+  this.name = obj.name;
+};
+//MyFileError.prototype.__proto__ = FileError.prototype;
+
+// Extend FileError with custom errors and a convenience method to get error
+// code mnemonic.
+self.FileError.BROWSER_NOT_SUPPORTED = 1000;
+
+// TODO: remove when FileError.name is implemented (crbug.com/86014).
+self.FileError.prototype.__defineGetter__('name', function() {
+  var keys = Object.keys(self.FileError);
+  for (var i = 0, key; key = keys[i]; ++i) {
+    if (self.FileError[key] == this.code) {
+      return key;
+    }
+  }
+  return 'Unknown Error';
+});
+
+
+var Filer = new function() {
+
+  var FS_INIT_ERROR_MSG = 'Filesystem has not been initialized.';
+  var NOT_IMPLEMENTED_MSG = 'Not implemented.';
+  var NOT_A_DIRECTORY = 'Path was not a directory.';
+  var INCORRECT_ARGS = 'These method arguments are not supported.';
+  var FS_URL_SCHEME = 'filesystem:';
+  var DEFAULT_FS_SIZE = 1024 * 1024; // 1MB.
+
+  var fs_ = null;
+  var cwd_ = null;
+  var isOpen_ = false;
+
+  var isFsURL_ = function(path) {
+    return path.indexOf(FS_URL_SCHEME) == 0;
+  };
+
+  // Path can be relative or absolute. If relative, it's taken from the cwd_.
+  // If a filesystem URL is passed it, it is simple returned
+  var pathToFsURL_ = function(path) {
+    if (!isFsURL_(path)) {
+      if (path[0] == '/') {
+        path = fs_.root.toURL() + path.substring(1);
+      } else if (path.indexOf('./') == 0 || path.indexOf('../') == 0) {
+        if (path == '../' && cwd_ != fs_.root) {
+          path = cwd_.toURL() + '/' + path;
+        } else {
+          path = cwd_.toURL() + path;
+        }
+      } else {
+        path = cwd_.toURL() + '/' + path;
+      }
+    }
+
+    return path;
+  };
+
+  /**
+   * Looks up a FileEntry or DirectoryEntry for a given path.
+   *
+   * @param {function(...FileEntry|DirectorEntry)} callback A callback to be
+   *     passed the entry/entries that were fetched. The ordering of the
+   *     entries passed to the callback correspond to the same order passed
+   *     to this method.
+   * @param {...string} var_args 1-2 paths to lookup and return entries for.
+   *     These can be paths or filesystem: URLs.
+   */
+  var getEntry_ = function(callback, var_args) {
+    var srcStr = arguments[1];
+    var destStr = arguments[2];
+
+    var onError = function(e) {
+      if (e.code == self.FileError.NOT_FOUND_ERR) {
+        if (destStr) {
+          throw new Error('"' + srcStr + '" or "' + destStr +
+                          '" does not exist.');
+        } else {
+          throw new Error('"' + srcStr + '" does not exist.');
+        }
+      } else {
+        throw new Error('Problem getting Entry for one or more paths.');
+      }
+    };
+
+    // Build a filesystem: URL manually if we need to.
+    var src = pathToFsURL_(srcStr);
+
+    if (arguments.length == 3) {
+      var dest = pathToFsURL_(destStr);
+      self.resolveLocalFileSystemURL(src, function(srcEntry) {
+        self.resolveLocalFileSystemURL(dest, function(destEntry) {
+          callback(srcEntry, destEntry);
+        }, onError);
+      }, onError);
+    } else {
+      self.resolveLocalFileSystemURL(src, callback, onError);
+    }
+  };
+
+  /**
+   * Copy or moves a file or directory to a destination.
+   *
+   * See public method's description (Filer.cp()) for rest of params.
+   * @param {Boolean=} opt_deleteOrig True if the original entry should be
+   *     deleted after the copy takes place, essentially making the operation
+   *     a move instead of a copy. Defaults to false.
+   */
+  var copyOrMove_ = function(src, dest, opt_newName, opt_successCallback,
+                             opt_errorHandler, opt_deleteOrig) {
+    var self = this;
+
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+
+    if (typeof src != typeof dest) {
+      throw new Error(INCORRECT_ARGS);
+    }
+
+    var newName = opt_newName || null;
+    var deleteOrig = opt_deleteOrig != undefined ? opt_deleteOrig : false;
+
+    if ((src.isFile || dest.isDirectory) && dest.isDirectory) {
+      if (deleteOrig) {
+        src.moveTo(dest, newName, opt_successCallback, opt_errorHandler);
+      } else {
+        src.copyTo(dest, newName, opt_successCallback, opt_errorHandler);
+      }
+    } else {
+      getEntry_(function(srcEntry, destDir) {
+        if (!destDir.isDirectory) {
+          var e = new Error('Oops! "' + destDir.name + ' is not a directory!');
+          if (opt_errorHandler) {
+            opt_errorHandler(e);
+          } else {
+            throw e;
+          }
+          return;
+        }
+        if (deleteOrig) {
+          srcEntry.moveTo(destDir, newName, opt_successCallback, opt_errorHandler);
+        } else {
+          srcEntry.copyTo(destDir, newName, opt_successCallback, opt_errorHandler);
+        }
+      }, src, dest);
+    }
+  }
+
+  function Filer(fs) {
+    fs_  = fs || null;
+    if (fs_) {
+      cwd_ = fs_.root;
+      isOpen_ = true; // TODO: this may not be the case.
+    }
+  }
+
+  Filer.DEFAULT_FS_SIZE = DEFAULT_FS_SIZE;
+  Filer.version = '0.4.3';
+
+  Filer.prototype = {
+    get fs() {
+      return fs_;
+    },
+    get isOpen() {
+      return isOpen_;
+    },
+    get cwd() {
+      return cwd_;
+    }
+  }
+
+  /**
+   * Constructs and returns a filesystem: URL given a path.
+   *
+   * @param {string=} path The path to construct a URL for.
+   *     size {int=} The storage size (in bytes) to open the filesystem with.
+   *         Defaults to DEFAULT_FS_SIZE.
+   * @return {string} The filesystem: URL.
+   */
+  Filer.prototype.pathToFilesystemURL = function(path) {
+    return pathToFsURL_(path);
+  }
+
+  /**
+   * Initializes (opens) the file system.
+   *
+   * @param {object=} opt_initObj Optional object literal with the following
+   *     properties. Note: If {} or null is passed, default values are used.
+   *     persistent {Boolean=} Whether the browser should use persistent quota.
+   *         Default is false.
+   *     size {int=} The storage size (in bytes) to open the filesystem with.
+   *         Defaults to DEFAULT_FS_SIZE.
+   */
+  Filer.prototype.init = function(opt_initObj) {
+    if (!self.requestFileSystem) {
+      throw new MyFileError({
+        code: self.FileError.BROWSER_NOT_SUPPORTED,
+        name: 'BROWSER_NOT_SUPPORTED'
+      });
+    }
+    return new Promise(function (resolve, reject) {
+      var initObj = opt_initObj ? opt_initObj : {}; // Use defaults if obj is null.
+
+      var size = initObj.size || DEFAULT_FS_SIZE;
+      this.type = self.TEMPORARY;
+      if ('persistent' in initObj && initObj.persistent) {
+        this.type = self.PERSISTENT;
+      }
+
+      var init = function(fs) {
+        this.size = size;
+        fs_ = fs;
+        cwd_ = fs_.root;
+        isOpen_ = true;
+
+        resolve(fs);
+      };
+
+      if (this.type == self.PERSISTENT && !!navigator.persistentStorage) {
+        navigator.persistentStorage.requestQuota(size, function(grantedBytes) {  
+          self.requestFileSystem(
+              this.type, grantedBytes, init.bind(this), reject);
+        }.bind(this), reject);
+      } else {
+        self.requestFileSystem(
+            this.type, size, init.bind(this), reject);
+      }
+    }.bind(this));
+  };
+
+  /**
+   * Reads the contents of a directory.
+   *
+   * @param {string|DirectoryEntry} dirEntryOrPath A path relative to the
+   *     current working directory. In most cases that is the root entry, unless
+   *     cd() has been called. A DirectoryEntry or filesystem URL can also be
+   *     passed, in which case, the folder's contents will be returned.
+   */
+  Filer.prototype.ls = function(dirEntryOrPath) {
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      var callback = function(dirEntry) {
+
+        cwd_ = dirEntry;
+
+        // Read contents of current working directory. According to spec, need to
+        // keep calling readEntries() until length of result array is 0. We're
+        // guarenteed the same entry won't be returned again.
+        var entries_ = [];
+        var reader = cwd_.createReader();
+
+        var readEntries = function() {
+          reader.readEntries(function(results) {
+            if (!results.length) {
+              // By default, sort the list by name.
+              entries_.sort(function(a, b) {
+                return a.name < b.name ? -1 : b.name < a.name ? 1 : 0;
+              });
+              resolve(entries_);
+            } else {
+              entries_ = entries_.concat(Util.toArray(results));
+              readEntries();
+            }
+          }, reject);
+        };
+
+        readEntries();
+      };
+
+      if (dirEntryOrPath.isDirectory) { // passed a DirectoryEntry.
+        callback(dirEntryOrPath);
+      } else if (isFsURL_(dirEntryOrPath)) { // passed a filesystem URL.
+        getEntry_(callback, dirEntryOrPath);
+      } else { // Passed a path. Look up DirectoryEntry and proceeed.
+        // TODO: Find way to use getEntry_(callback, dirEntryOrPath); with cwd_.
+        cwd_.getDirectory(dirEntryOrPath, {}, callback, reject);
+      }
+    }.bind(this));
+  };
+
+  /**
+   * Creates a new directory.
+   *
+   * @param {string} path The name of the directory to create. If a path is
+   *     given, each intermediate dir is created (e.g. similar to mkdir -p).
+   * @param {bool=} opt_exclusive True if an error should be thrown if
+   *     one or more of the directories already exists. False by default.
+   */
+  Filer.prototype.mkdir = function(path, opt_exclusive) {
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      var exclusive = opt_exclusive != null ? opt_exclusive : false;
+
+      var folderParts = path.split('/');
+
+      var createDir = function(rootDir, folders) {
+        // Throw out './' or '/' and move on. Prevents: '/foo/.//bar'.
+        if (folders[0] == '.' || folders[0] == '') {
+          folders = folders.slice(1);
+        }
+
+        rootDir.getDirectory(folders[0], {create: true, exclusive: exclusive},
+          function (dirEntry) {
+            if (dirEntry.isDirectory) { // TODO: check shouldn't be necessary.
+              // Recursively add the new subfolder if we have more to create and
+              // There was more than one folder to create.
+              if (folders.length && folderParts.length != 1) {
+                createDir(dirEntry, folders.slice(1));
+              } else {
+                // Return the last directory that was created.
+                resolve(dirEntry);
+              }
+            } else {
+              reject(new Error(path + ' is not a directory'));
+            }
+          },
+          function(e) {
+            if (e.code == self.FileError.INVALID_MODIFICATION_ERR) {
+              e.message = "'" + path + "' already exists";
+              reject(e);
+            }
+          }
+        );
+      };
+
+      createDir(cwd_, folderParts);
+    }.bind(this));
+  };
+
+  /**
+   * Looks up and return a File for a given file entry.
+   *
+   * @param {string|FileEntry} entryOrPath A path, filesystem URL, or FileEntry
+   *     of the file to lookup.
+   */
+  Filer.prototype.open = function(entryOrPath) {
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      if (entryOrPath.isFile) {
+        entryOrPath.file(resolve, reject);
+      } else {
+        getEntry_(function(fileEntry) {
+          fileEntry.file(resolve, reject);
+        }, pathToFsURL_(entryOrPath));
+      }
+    }.bind(this));
+  };
+
+  /**
+   * Creates an empty file.
+   *
+   * @param {string} path The relative path of the file to create, from the
+   *     current working directory.
+   * @param {bool=} opt_exclusive True (default) if an error should be thrown if
+   *     the file already exists.
+   */
+  Filer.prototype.create = function(path, opt_exclusive) {
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      var exclusive = opt_exclusive != null ? opt_exclusive : true;
+
+      cwd_.getFile(path, {create: true,  exclusive: exclusive}, resolve,
+        function(e) {
+          if (e.code == self.FileError.INVALID_MODIFICATION_ERR) {
+            e.message = "'" + path + "' already exists";
+          }
+          reject(e);
+        }
+      );
+    }.bind(this));
+  };
+
+  /**
+    * Moves a file or directory.
+    *
+    * @param {string|FileEntry|DirectoryEntry} src The file/directory
+    *     to move. If src is a string, a path or filesystem: URL is accepted.
+    * @param {string|DirectoryEntry} dest The directory to move the src into.
+    *     If dest is a string, a path or filesystem: URL is accepted.
+    *     Note: dest needs to be the same type as src.
+    * @param {string=} opt_newName An optional new name for the moved entry.
+    */
+  Filer.prototype.mv = function(src, dest, opt_newName) {
+    return new Promise(function (resolve, reject) {
+      copyOrMove_.bind(this, src, dest, opt_newName, resolve,
+                       reject, true)();
+    }.bind(this));
+  };
+
+  /**
+   * Deletes a file or directory entry.
+   *
+   * @param {string|FileEntry|DirectoryEntry} entryOrPath The file or directory
+   *     to remove. If entry is a DirectoryEntry, its contents are removed
+   *     recursively. If entryOrPath is a string, a path or filesystem: URL is
+   *     accepted.
+   */
+  Filer.prototype.rm = function(entryOrPath) {
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      var removeIt = function(entry) {
+        if (entry.isFile) {
+          entry.remove(resolve, reject);
+        } else if (entry.isDirectory) {
+          entry.removeRecursively(resolve, reject);
+        }
+      };
+
+      if (entryOrPath.isFile || entryOrPath.isDirectory) {
+        removeIt(entryOrPath);
+      } else {
+        getEntry_(removeIt, entryOrPath);
+      }
+    }.bind(this));
+  };
+
+  /**
+   * Changes the current working directory.
+   *
+   * @param {string|DirectoryEntry} dirEntryOrPath A DirectoryEntry to move into
+   *     or a path relative to the current working directory. A filesystem: URL
+   *     is also accepted
+   */
+  Filer.prototype.cd = function(dirEntryOrPath) {
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      if (dirEntryOrPath.isDirectory) {
+        cwd_ = dirEntryOrPath;
+        resolve(cwd_);
+      } else {
+        // Build a filesystem: URL manually if we need to.
+        dirEntryOrPath = pathToFsURL_(dirEntryOrPath);
+
+        getEntry_(function(dirEntry) {
+          if (dirEntry.isDirectory) {
+            cwd_ = dirEntry;
+            resolve(cwd_);
+          } else {
+            reject(new Error(NOT_A_DIRECTORY));
+          }
+        }, dirEntryOrPath);
+      }
+    }.bind(this));
+  };
+
+  /**
+    * Copies a file or directory to a destination.
+    *
+    * @param {string|FileEntry|DirectoryEntry} src The file/directory
+    *     to copy. If src is a string, a path or filesystem: URL is accepted.
+    * @param {string|DirectoryEntry} dest The directory to copy the src into.
+    *     If dest is a string, a path or filesystem: URL is accepted.
+    *     Note: dest needs to be the same type as src.
+    * @param {string=} opt_newName An optional name for the copied entry.
+    */
+  Filer.prototype.cp = function(src, dest, opt_newName) {
+    return new Promise(function (resolve, reject) {
+      copyOrMove_.bind(this, src, dest, opt_newName, resolve, reject)();
+    }.bind(this));
+  };
+
+  /**
+   * Writes data to a file.
+   *
+   * If the file already exists, its contents are overwritten.
+   *
+   * @param {string|FileEntry} entryOrPath A path, filesystem URL, or FileEntry
+    *     of the file to lookup.
+   * @param {object} dataObj The data to write. Example:
+   *     {data: string|Blob|File|ArrayBuffer, type: mimetype, append: true}
+   *     If append is specified, data is appended to the end of the file.
+   */
+  Filer.prototype.write = function(entryOrPath, dataObj) {
+    if (!fs_) {
+      throw new Error(FS_INIT_ERROR_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      var writeFile_ = function(fileEntry) {
+        fileEntry.createWriter(function(fileWriter) {
+
+          fileWriter.onerror = reject;
+
+          if (dataObj.append) {
+            fileWriter.onwriteend = function(e) {
+              resolve([fileEntry, this]);
+            };
+
+            fileWriter.seek(fileWriter.length); // Start write position at EOF.
+          } else {
+            var truncated = false;
+            fileWriter.onwriteend = function(e) {
+              // Truncate file to newly written file size.
+              if (!truncated) {
+                truncated = true;
+                this.truncate(this.position);
+                return;
+              }
+              resolve([fileEntry, this]);
+            };
+          }
+
+          // Blob() takes ArrayBufferView, not ArrayBuffer.
+          if (dataObj.data.__proto__ == ArrayBuffer.prototype) {
+            dataObj.data = new Uint8Array(dataObj.data);
+          }
+          var blob = new Blob([dataObj.data],
+                              dataObj.type ? {type: dataObj.type} : {});
+
+          fileWriter.write(blob);
+
+        }, reject);
+      };
+
+      if (entryOrPath.isFile) {
+        writeFile_(entryOrPath);
+      } else if (isFsURL_(entryOrPath)) {
+        getEntry_(writeFile_, entryOrPath);
+      } else {
+        cwd_.getFile(entryOrPath, {create: true, exclusive: false}, writeFile_, reject);
+      }
+    }.bind(this));
+  };
+  
+  /**
+   * Displays disk space usage.
+   */
+  Filer.prototype.df = function() {
+    if (!(navigator.temporaryStorage.queryUsageAndQuota && navigator.persistentStorage.queryUsageAndQuota)) {
+      throw new Error(NOT_IMPLEMENTED_MSG);
+    }
+    return new Promise(function (resolve, reject) {
+      var queryCallback = function(byteUsed, byteCap) {
+        resolve([byteUsed, byteCap - byteUsed, byteCap]);
+      }
+
+      if (self.TEMPORARY == this.type) {
+        navigator.temporaryStorage.queryUsageAndQuota(queryCallback, reject);
+      } else if (self.PERSISTENT == this.type) {
+        navigator.persistentStorage.queryUsageAndQuota(queryCallback, reject);
+      }
+    }.bind(this));
+  };
+                                   
+  return Filer;
+};
+module.exports = Filer;
+}).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{}],100:[function(require,module,exports){
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -9967,12 +10745,9 @@ var _chromeTabCaptureVisibleTabFull = require('chrome-tab-capture-visible-tab-fu
 var _chromeTabCaptureVisibleTabFull2 = _interopRequireDefault(_chromeTabCaptureVisibleTabFull);
 
 var Service = (function () {
-    function Service(_ref) {
-        var urls = _ref.urls;
-
+    function Service() {
         _classCallCheck(this, Service);
 
-        this.urls = urls;
         this.tabAPI = new _chromeExtensionApiPromise.tabs();
         this.storageAPI = new _chromeExtensionApiPromise.storage();
         this.captureVisibleTab = new _chromeTabCaptureVisibleTabFull2['default']({
@@ -10012,7 +10787,7 @@ var Service = (function () {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return this.tabsModel.createActive();
+                        return this.tabAPI.createActive();
 
                     case 2:
                         return context$2$0.abrupt('return', context$2$0.sent);
@@ -10025,9 +10800,9 @@ var Service = (function () {
         }
     }, {
         key: 'doCapture',
-        value: function doCapture(_ref2) {
-            var tab = _ref2.tab;
-            var urls = _ref2.urls;
+        value: function doCapture(_ref) {
+            var tab = _ref.tab;
+            var urls = _ref.urls;
             var urlListService, urlModels;
             return regeneratorRuntime.async(function doCapture$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
@@ -10055,8 +10830,8 @@ var Service = (function () {
         }
     }, {
         key: 'doSave',
-        value: function doSave(_ref3) {
-            var model = _ref3.model;
+        value: function doSave(_ref2) {
+            var model = _ref2.model;
             return regeneratorRuntime.async(function doSave$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
@@ -10071,9 +10846,9 @@ var Service = (function () {
         }
     }, {
         key: 'openResultView',
-        value: function openResultView(_ref4) {
-            var tab = _ref4.tab;
-            var model = _ref4.model;
+        value: function openResultView(_ref3) {
+            var tab = _ref3.tab;
+            var model = _ref3.model;
             var path;
             return regeneratorRuntime.async(function openResultView$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
@@ -10087,14 +10862,13 @@ var Service = (function () {
                         return this.tabAPI.waitComplete(tab.id);
 
                     case 5:
-                        debugger;
-                        context$2$0.next = 8;
+                        context$2$0.next = 7;
                         return this.tabAPI.sendMessage(tab.id, {
                             'type': 'CaptureResults',
                             'model': model
                         });
 
-                    case 8:
+                    case 7:
                     case 'end':
                         return context$2$0.stop();
                 }
