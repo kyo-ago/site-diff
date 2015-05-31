@@ -14,6 +14,7 @@ export default class Repository extends BaseRepository {
         return new Model({
             id,
             url: data['url'],
+            fileUrl: data['fileUrl'],
             captureVisibleTab: this.captureVisibleTab,
             'blob': file,
             captureTime: data['captureTime']
@@ -21,15 +22,17 @@ export default class Repository extends BaseRepository {
     }
     async save({ model }) {
         let blob = await model.getBlob();
-        await this.filer.write(model.getId(), {
+        let [fileEntry] = await this.filer.write(model.getId(), {
             data: blob,
             type: 'image/png',
             append: false
         });
+        model.fileUrl = fileEntry.toURL();
         await this.storageAPI.setLocal({
             [model.getId()]: {
                 url: model['url'],
-                captureTime: model['captureTime']
+                fileUrl: model['fileUrl'],
+                captureTime: model['captureTime']+''
             }
         });
     }

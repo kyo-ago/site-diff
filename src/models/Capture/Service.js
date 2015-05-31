@@ -46,8 +46,11 @@ export default class Service {
         await this.tabAPI.updateInnerPage(tab.id, path);
         await this.tabAPI.waitComplete(tab.id);
         await this.tabAPI.sendMessage(tab.id, {
-            'type': 'CaptureResults',
-            'model': model
+            'type': 'doRender',
+            'data': {
+                'type': 'resultsMessage',
+                'data': model.getModels()
+            }
         });
     }
 }

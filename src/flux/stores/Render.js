@@ -6,13 +6,17 @@ export default class Render extends Store {
         super(context);
         this.register(keys.doRender, this.onHandler);
         this.state = {
-            data: []
+            models: [],
+            urls: {}
         };
     }
-    onHandler(data) {
-        this.setState({data});
+    onHandler({models, urls}) {
+        this.setState({models, urls});
     }
-    getData() {
-        return this.state.data;
+    getModels() {
+        return this.state.models;
+    }
+    getUrls() {
+        return this.state.urls;
     }
 }

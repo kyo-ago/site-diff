@@ -1,6 +1,8 @@
 import React from 'react';
+import Result from './Result';
+import Urls from './Urls';
 
-export default class Result extends React.Component {
+export default class Main extends React.Component {
     constructor(props) {
         super(props);
         this.renderStore = this.props.context.store.render;
@@ -19,6 +21,11 @@ export default class Result extends React.Component {
 
     componentDidMount() {
         this.renderStore.onChange(this._onChange.bind(this));
+
+        var { context } = this.props;
+        context.actions.result({
+            'type': 'onLoad'
+        });
     }
 
     componentWillUnmount() {
@@ -26,10 +33,14 @@ export default class Result extends React.Component {
     }
 
     render() {
-        let items = this.state.models.map(({fileUrl}) => <img src={fileUrl} />);
         return (
             <div>
-                {items}
+                <div>
+                    <Urls />
+                </div>
+                <div>
+                    <Result />
+                </div>
             </div>
         );
     }

@@ -10708,6 +10708,22 @@ var _monapt2 = _interopRequireDefault(_monapt);
 var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
 global.Promise = _bluebird2['default'];
 global.monapt = _monapt2['default'];
+if (!HTMLCanvasElement.prototype.toBlob) {
+    Object.defineProperty(HTMLCanvasElement.prototype, 'toBlob', {
+        value: function value(callback, type, quality) {
+
+            var binStr = atob(this.toDataURL(type, quality).split(',')[1]),
+                len = binStr.length,
+                arr = new Uint8Array(len);
+
+            for (var i = 0; i < len; i++) {
+                arr[i] = binStr.charCodeAt(i);
+            }
+
+            callback(new Blob([arr], { type: type || 'image/png' }));
+        }
+    });
+}
 
 },{"babel-core/polyfill":91,"bluebird":92,"monapt":100}],102:[function(require,module,exports){
 'use strict';
@@ -10864,8 +10880,11 @@ var Service = (function () {
                     case 5:
                         context$2$0.next = 7;
                         return this.tabAPI.sendMessage(tab.id, {
-                            'type': 'CaptureResults',
-                            'model': model
+                            'type': 'doRender',
+                            'data': {
+                                'type': 'resultsMessage',
+                                'data': model.getModels()
+                            }
                         });
 
                     case 7:
@@ -10894,8 +10913,6 @@ var _createClass = (function () { function defineProperties(target, props) { for
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
@@ -10933,41 +10950,6 @@ var Model = (function (_BaseModel) {
             return this.blob;
         }
     }, {
-        key: '_canvasToBlob',
-        value: function _canvasToBlob(canvas) {
-            return new Promise(function (resolve) {
-                if (canvas.toBlob) {
-                    return canvas.toBlob(resolve);
-                }
-
-                // HTMLCanvasElement.toBlob() - Web API Interfaces | MDN https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/toBlob
-                var dataURLScheme = canvas.toDataURL();
-
-                var _dataURLScheme$split = dataURLScheme.split(',', 2);
-
-                var _dataURLScheme$split2 = _slicedToArray(_dataURLScheme$split, 2);
-
-                var scheme = _dataURLScheme$split2[0];
-                var data = _dataURLScheme$split2[1];
-
-                var _scheme$match = scheme.match(/:(.+?);/);
-
-                var _scheme$match2 = _slicedToArray(_scheme$match, 2);
-
-                var mimeType = _scheme$match2[1];
-
-                var binStr = atob(data);
-                var len = binStr.length;
-                var arr = new Uint8Array(len);
-
-                for (var i = 0; i < len; i++) {
-                    arr[i] = binStr.charCodeAt(i);
-                }
-
-                resolve(new Blob([arr], { 'type': mimeType }));
-            });
-        }
-    }, {
         key: 'getCapture',
         value: function getCapture(_ref2) {
             var tab = _ref2.tab;
@@ -10993,7 +10975,9 @@ var Model = (function (_BaseModel) {
                     case 7:
                         canvas = context$2$0.sent;
                         context$2$0.next = 10;
-                        return this._canvasToBlob(canvas);
+                        return new Promise(function (r) {
+                            return canvas.toBlob(r);
+                        });
 
                     case 10:
                         this.blob = context$2$0.sent;
@@ -11024,6 +11008,8 @@ var _createClass = (function () { function defineProperties(target, props) { for
 var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+function _slicedToArray(arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i['return']) _i['return'](); } finally { if (_d) throw _e; } } return _arr; } else { throw new TypeError('Invalid attempt to destructure non-iterable instance'); } }
 
 function _defineProperty(obj, key, value) { return Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); }
 
@@ -11076,6 +11062,7 @@ var Repository = (function (_BaseRepository) {
                         return context$2$0.abrupt('return', new _Model2['default']({
                             id: id,
                             url: data['url'],
+                            fileUrl: data['fileUrl'],
                             captureVisibleTab: this.captureVisibleTab,
                             'blob': file,
                             captureTime: data['captureTime']
@@ -11091,7 +11078,9 @@ var Repository = (function (_BaseRepository) {
         key: 'save',
         value: function save(_ref3) {
             var model = _ref3.model;
-            var blob;
+
+            var blob, _ref4, _ref42, fileEntry;
+
             return regeneratorRuntime.async(function save$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
@@ -11108,13 +11097,19 @@ var Repository = (function (_BaseRepository) {
                         });
 
                     case 5:
-                        context$2$0.next = 7;
+                        _ref4 = context$2$0.sent;
+                        _ref42 = _slicedToArray(_ref4, 1);
+                        fileEntry = _ref42[0];
+
+                        model.fileUrl = fileEntry.toURL();
+                        context$2$0.next = 11;
                         return this.storageAPI.setLocal(_defineProperty({}, model.getId(), {
                             url: model['url'],
-                            captureTime: model['captureTime']
+                            fileUrl: model['fileUrl'],
+                            captureTime: model['captureTime'] + ''
                         }));
 
-                    case 7:
+                    case 11:
                     case 'end':
                         return context$2$0.stop();
                 }
