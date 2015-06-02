@@ -28,7 +28,7 @@ export default class Result extends React.Component {
     render() {
         let items = this.state.models.map(({fileUrl}) => <img src={fileUrl} />);
         return (
-            <div>
+            <div className="ResultCapture">
                 {items}
             </div>
         );

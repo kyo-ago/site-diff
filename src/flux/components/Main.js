@@ -33,13 +33,14 @@ export default class Main extends React.Component {
     }
 
     render() {
+        var { context } = this.props;
         return (
             <div>
                 <div>
-                    <Urls />
+                    <Urls context={context} />
                 </div>
                 <div>
-                    <Result />
+                    <Result context={context} />
                 </div>
             </div>
         );

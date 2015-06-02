@@ -31303,18 +31303,20 @@ var Main = (function (_React$Component) {
     }, {
         key: 'render',
         value: function render() {
+            var context = this.props.context;
+
             return _react2['default'].createElement(
                 'div',
                 null,
                 _react2['default'].createElement(
                     'div',
                     null,
-                    _react2['default'].createElement(_Urls2['default'], null)
+                    _react2['default'].createElement(_Urls2['default'], { context: context })
                 ),
                 _react2['default'].createElement(
                     'div',
                     null,
-                    _react2['default'].createElement(_Result2['default'], null)
+                    _react2['default'].createElement(_Result2['default'], { context: context })
                 )
             );
         }
@@ -31327,23 +31329,23 @@ exports['default'] = Main;
 module.exports = exports['default'];
 
 },{"./Result":268,"./Urls":269,"react":264}],268:[function(require,module,exports){
-'use strict';
+"use strict";
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
 
-var _react = require('react');
+var _react = require("react");
 
 var _react2 = _interopRequireDefault(_react);
 
@@ -31351,7 +31353,7 @@ var Result = (function (_React$Component) {
     function Result(props) {
         _classCallCheck(this, Result);
 
-        _get(Object.getPrototypeOf(Result.prototype), 'constructor', this).call(this, props);
+        _get(Object.getPrototypeOf(Result.prototype), "constructor", this).call(this, props);
         this.renderStore = this.props.context.store.render;
         this.state = {
             models: this.renderStore.getModels(),
@@ -31362,7 +31364,7 @@ var Result = (function (_React$Component) {
     _inherits(Result, _React$Component);
 
     _createClass(Result, [{
-        key: '_onChange',
+        key: "_onChange",
         value: function _onChange() {
             this.setState({
                 models: this.renderStore.getModels(),
@@ -31370,44 +31372,116 @@ var Result = (function (_React$Component) {
             });
         }
     }, {
-        key: 'componentDidMount',
+        key: "componentDidMount",
         value: function componentDidMount() {
             this.renderStore.onChange(this._onChange.bind(this));
         }
     }, {
-        key: 'componentWillUnmount',
+        key: "componentWillUnmount",
         value: function componentWillUnmount() {
             this.renderStore.removeAllChangeListeners();
         }
     }, {
-        key: 'render',
+        key: "render",
         value: function render() {
             var items = this.state.models.map(function (_ref) {
                 var fileUrl = _ref.fileUrl;
-                return _react2['default'].createElement('img', { src: fileUrl });
+                return _react2["default"].createElement("img", { src: fileUrl });
             });
-            return _react2['default'].createElement(
-                'div',
-                null,
+            return _react2["default"].createElement(
+                "div",
+                { className: "ResultCapture" },
                 items
             );
         }
     }]);
 
     return Result;
-})(_react2['default'].Component);
+})(_react2["default"].Component);
 
-exports['default'] = Result;
-module.exports = exports['default'];
+exports["default"] = Result;
+module.exports = exports["default"];
 
 },{"react":264}],269:[function(require,module,exports){
 "use strict";
 
-/**
- * Created by kyo on 5/31/15.
- */
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 
-},{}],270:[function(require,module,exports){
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) subClass.__proto__ = superClass; }
+
+var _react = require("react");
+
+var _react2 = _interopRequireDefault(_react);
+
+var Urls = (function (_React$Component) {
+    function Urls(props) {
+        _classCallCheck(this, Urls);
+
+        _get(Object.getPrototypeOf(Urls.prototype), "constructor", this).call(this, props);
+        this.renderStore = this.props.context.store.render;
+        this.state = {
+            urls: this.renderStore.getUrls()
+        };
+    }
+
+    _inherits(Urls, _React$Component);
+
+    _createClass(Urls, [{
+        key: "_onChange",
+        value: function _onChange() {
+            this.setState({
+                urls: this.renderStore.getUrls()
+            });
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            this.renderStore.onChange(this._onChange.bind(this));
+        }
+    }, {
+        key: "componentWillUnmount",
+        value: function componentWillUnmount() {
+            this.renderStore.removeAllChangeListeners();
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var urls = Object.keys(this.state.urls).map(function (url) {
+                return _react2["default"].createElement(
+                    "li",
+                    null,
+                    url
+                );
+            });
+            return _react2["default"].createElement(
+                "div",
+                { className: "UrlList" },
+                _react2["default"].createElement(
+                    "ul",
+                    null,
+                    urls
+                )
+            );
+        }
+    }]);
+
+    return Urls;
+})(_react2["default"].Component);
+
+exports["default"] = Urls;
+module.exports = exports["default"];
+
+},{"react":264}],270:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, '__esModule', {
