@@ -31386,7 +31386,7 @@ var Result = (function (_React$Component) {
         value: function render() {
             var items = this.state.models.map(function (_ref) {
                 var fileUrl = _ref.fileUrl;
-                return _react2["default"].createElement("img", { src: fileUrl });
+                return _react2["default"].createElement("img", { key: fileUrl, src: fileUrl });
             });
             return _react2["default"].createElement(
                 "div",
@@ -31454,13 +31454,24 @@ var Urls = (function (_React$Component) {
             this.renderStore.removeAllChangeListeners();
         }
     }, {
+        key: "onClick",
+        value: function onClick(url) {
+            console.log(url);
+        }
+    }, {
         key: "render",
         value: function render() {
+            var _this = this;
+
             var urls = Object.keys(this.state.urls).map(function (url) {
                 return _react2["default"].createElement(
                     "li",
-                    null,
-                    url
+                    { key: url },
+                    _react2["default"].createElement(
+                        "a",
+                        { onClick: _this.onClick.bind(_this, url), href: "#" },
+                        url
+                    )
                 );
             });
             return _react2["default"].createElement(
