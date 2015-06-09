@@ -28,9 +28,9 @@ let InnerResultPath = 'html/capture_result.html';
             return;
         }
         let tab = await tabAPI.createActive();
-        console.log(tab);
 
         let urlSetModel = new URLSetModel({ URLList: urls });
+        let captureModelIds = [];
         for (let doc of urlSetModel.loadURLList()) {
             let captureModel = await doc.capture({
                 tab,
@@ -38,15 +38,19 @@ let InnerResultPath = 'html/capture_result.html';
                 captureVisibleTab
             });
             await captureRepository.save({ model: captureModel });
+            captureModelIds.push(captureModel.getId());
         }
 
-        await this.tabAPI.updateInnerPage(tab.id, InnerResultPath);
-        await this.tabAPI.waitComplete(tab.id);
-        await this.tabAPI.sendMessage(tab.id, {
+        await tabAPI.updateInnerPage(tab.id, InnerResultPath);
+        await tabAPI.waitComplete(tab.id);
+        await tabAPI.sendMessage(tab.id, {
             'type': 'doRender',
             'data': {
                 'type': 'resultsMessage',
-                'data': model.getModels()
+                'data': {
+                    urlSetModelId: urlSetModel.getId(),
+                    captureModelIds: captureModelIds
+                }
             }
         });
     });

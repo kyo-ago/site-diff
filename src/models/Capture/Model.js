@@ -5,6 +5,12 @@ export default class Model extends BaseModel {
         super(id);
         this.url = url;
         this.blob = blob;
-        this.captureTime = captureTime;
+        this.captureTime = 'string' === typeof captureTime ? new Date(captureTime) : captureTime;
+    }
+    extract() {
+        return Object.assign({}, super.extract(), {
+            url: this.url,
+            captureTime: this.captureTime + ''
+        });
     }
 }

@@ -12,7 +12,7 @@ export default class Model extends BaseModel {
         });
         await tabAPI.waitComplete(tab.id);
         let canvas = await captureVisibleTab.capture({ tab });
-        blob = await new Promise((r) => canvas.toBlob(r));
+        let blob = await new Promise((r) => canvas.toBlob(r));
         return new CaptureModel({ url: this.url, blob });
     }
 }

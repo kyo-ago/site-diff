@@ -10,4 +10,7 @@ export default class Model {
     eq(model) {
         return this.id === model.getId();
     }
+    extract() {
+        return { id: this.id };
+    }
 }

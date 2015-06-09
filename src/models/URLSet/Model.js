@@ -12,4 +12,7 @@ export default class Model extends BaseModel {
             yield documentModel;
         }
     }
+    extract() {
+        return Object.assign({}, super.extract(), { URLList: this.URLList });
+    }
 }

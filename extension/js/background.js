@@ -45,7 +45,7 @@ var InnerResultPath = 'html/capture_result.html';
                 });
                 filer = new _filerJs2['default']();
                 context$1$0.next = 6;
-                return filer.init();
+                return _regeneratorRuntime.awrap(filer.init());
 
             case 6:
                 captureRepository = new _modelsCaptureRepository2['default']({
@@ -57,7 +57,7 @@ var InnerResultPath = 'html/capture_result.html';
                     var type = _ref.type;
                     var urls = _ref.urls;
 
-                    var tab, urlSetModel, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, doc, captureModel;
+                    var tab, urlSetModel, captureModelIds, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, doc, captureModel;
 
                     return _regeneratorRuntime.async(function callee$1$0$(context$2$0) {
                         while (1) switch (context$2$0.prev = context$2$0.next) {
@@ -71,14 +71,12 @@ var InnerResultPath = 'html/capture_result.html';
 
                             case 2:
                                 context$2$0.next = 4;
-                                return tabAPI.createActive();
+                                return _regeneratorRuntime.awrap(tabAPI.createActive());
 
                             case 4:
                                 tab = context$2$0.sent;
-
-                                console.log(tab);
-
                                 urlSetModel = new _modelsURLSetModel2['default']({ URLList: urls });
+                                captureModelIds = [];
                                 _iteratorNormalCompletion = true;
                                 _didIteratorError = false;
                                 _iteratorError = undefined;
@@ -87,85 +85,91 @@ var InnerResultPath = 'html/capture_result.html';
 
                             case 12:
                                 if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                                    context$2$0.next = 22;
+                                    context$2$0.next = 23;
                                     break;
                                 }
 
                                 doc = _step.value;
                                 context$2$0.next = 16;
-                                return doc.capture({
+                                return _regeneratorRuntime.awrap(doc.capture({
                                     tab: tab,
                                     tabAPI: tabAPI,
                                     captureVisibleTab: captureVisibleTab
-                                });
+                                }));
 
                             case 16:
                                 captureModel = context$2$0.sent;
                                 context$2$0.next = 19;
-                                return captureRepository.save({ model: captureModel });
+                                return _regeneratorRuntime.awrap(captureRepository.save({ model: captureModel }));
 
                             case 19:
+                                captureModelIds.push(captureModel.id);
+
+                            case 20:
                                 _iteratorNormalCompletion = true;
                                 context$2$0.next = 12;
                                 break;
 
-                            case 22:
-                                context$2$0.next = 28;
+                            case 23:
+                                context$2$0.next = 29;
                                 break;
 
-                            case 24:
-                                context$2$0.prev = 24;
+                            case 25:
+                                context$2$0.prev = 25;
                                 context$2$0.t0 = context$2$0['catch'](10);
                                 _didIteratorError = true;
                                 _iteratorError = context$2$0.t0;
 
-                            case 28:
-                                context$2$0.prev = 28;
+                            case 29:
                                 context$2$0.prev = 29;
+                                context$2$0.prev = 30;
 
                                 if (!_iteratorNormalCompletion && _iterator['return']) {
                                     _iterator['return']();
                                 }
 
-                            case 31:
-                                context$2$0.prev = 31;
+                            case 32:
+                                context$2$0.prev = 32;
 
                                 if (!_didIteratorError) {
-                                    context$2$0.next = 34;
+                                    context$2$0.next = 35;
                                     break;
                                 }
 
                                 throw _iteratorError;
 
-                            case 34:
-                                return context$2$0.finish(31);
-
                             case 35:
-                                return context$2$0.finish(28);
+                                return context$2$0.finish(32);
 
                             case 36:
-                                context$2$0.next = 38;
-                                return undefined.tabAPI.updateInnerPage(tab.id, InnerResultPath);
+                                return context$2$0.finish(29);
 
-                            case 38:
-                                context$2$0.next = 40;
-                                return undefined.tabAPI.waitComplete(tab.id);
+                            case 37:
+                                context$2$0.next = 39;
+                                return _regeneratorRuntime.awrap(tabAPI.updateInnerPage(tab.id, InnerResultPath));
 
-                            case 40:
-                                context$2$0.next = 42;
-                                return undefined.tabAPI.sendMessage(tab.id, {
+                            case 39:
+                                context$2$0.next = 41;
+                                return _regeneratorRuntime.awrap(tabAPI.waitComplete(tab.id));
+
+                            case 41:
+                                context$2$0.next = 43;
+                                return _regeneratorRuntime.awrap(tabAPI.sendMessage(tab.id, {
                                     'type': 'doRender',
                                     'data': {
                                         'type': 'resultsMessage',
-                                        'data': model.getModels()
+                                        'data': {
+                                            urlSetModel: urlSetModel.extract(),
+                                            captureModelIds: captureModelIds
+                                        }
                                     }
-                                });
+                                }));
 
-                            case 42:
+                            case 43:
                             case 'end':
                                 return context$2$0.stop();
                         }
-                    }, null, _this, [[10, 24, 28, 36], [29,, 31, 35]]);
+                    }, null, _this, [[10, 25, 29, 37], [30,, 32, 36]]);
                 });
 
             case 8:
@@ -175,7 +179,7 @@ var InnerResultPath = 'html/capture_result.html';
     }, null, _this2);
 })();
 
-},{"./global":77,"./models/Capture/Repository":79,"./models/URLSet/Model":81,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/interop-require-default":17,"babel-runtime/regenerator":65,"chrome-extension-api-promise":69,"chrome-tab-capture-visible-tab-full":73,"filer.js":74}],2:[function(require,module,exports){
+},{"./global":74,"./models/Capture/Repository":76,"./models/URLSet/Model":78,"babel-runtime/core-js/get-iterator":3,"babel-runtime/helpers/interop-require-default":16,"babel-runtime/regenerator":62,"chrome-extension-api-promise":66,"chrome-tab-capture-visible-tab-full":70,"filer.js":71}],2:[function(require,module,exports){
 /*
  Version: core-1.0
  The MIT License: Copyright (c) 2012 LiosK.
@@ -185,23 +189,21 @@ module.exports = UUID;
 
 },{}],3:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/get-iterator"), __esModule: true };
-},{"core-js/library/fn/get-iterator":18}],4:[function(require,module,exports){
-module.exports = { "default": require("core-js/library/fn/number/is-safe-integer"), __esModule: true };
-},{"core-js/library/fn/number/is-safe-integer":19}],5:[function(require,module,exports){
+},{"core-js/library/fn/get-iterator":17}],4:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/assign"), __esModule: true };
-},{"core-js/library/fn/object/assign":20}],6:[function(require,module,exports){
+},{"core-js/library/fn/object/assign":18}],5:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/create"), __esModule: true };
-},{"core-js/library/fn/object/create":21}],7:[function(require,module,exports){
+},{"core-js/library/fn/object/create":19}],6:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/define-property"), __esModule: true };
-},{"core-js/library/fn/object/define-property":22}],8:[function(require,module,exports){
+},{"core-js/library/fn/object/define-property":20}],7:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/object/get-own-property-descriptor"), __esModule: true };
-},{"core-js/library/fn/object/get-own-property-descriptor":23}],9:[function(require,module,exports){
+},{"core-js/library/fn/object/get-own-property-descriptor":21}],8:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/promise"), __esModule: true };
-},{"core-js/library/fn/promise":24}],10:[function(require,module,exports){
+},{"core-js/library/fn/promise":22}],9:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol"), __esModule: true };
-},{"core-js/library/fn/symbol":25}],11:[function(require,module,exports){
+},{"core-js/library/fn/symbol":23}],10:[function(require,module,exports){
 module.exports = { "default": require("core-js/library/fn/symbol/iterator"), __esModule: true };
-},{"core-js/library/fn/symbol/iterator":26}],12:[function(require,module,exports){
+},{"core-js/library/fn/symbol/iterator":24}],11:[function(require,module,exports){
 "use strict";
 
 exports["default"] = function (instance, Constructor) {
@@ -211,7 +213,7 @@ exports["default"] = function (instance, Constructor) {
 };
 
 exports.__esModule = true;
-},{}],13:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 var _Object$defineProperty = require("babel-runtime/core-js/object/define-property")["default"];
@@ -236,7 +238,7 @@ exports["default"] = (function () {
 })();
 
 exports.__esModule = true;
-},{"babel-runtime/core-js/object/define-property":7}],14:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":6}],13:[function(require,module,exports){
 "use strict";
 
 var _Object$defineProperty = require("babel-runtime/core-js/object/define-property")["default"];
@@ -251,7 +253,7 @@ exports["default"] = function (obj, key, value) {
 };
 
 exports.__esModule = true;
-},{"babel-runtime/core-js/object/define-property":7}],15:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":6}],14:[function(require,module,exports){
 "use strict";
 
 var _Object$getOwnPropertyDescriptor = require("babel-runtime/core-js/object/get-own-property-descriptor")["default"];
@@ -295,7 +297,7 @@ exports["default"] = function get(_x, _x2, _x3) {
 };
 
 exports.__esModule = true;
-},{"babel-runtime/core-js/object/get-own-property-descriptor":8}],16:[function(require,module,exports){
+},{"babel-runtime/core-js/object/get-own-property-descriptor":7}],15:[function(require,module,exports){
 "use strict";
 
 var _Object$create = require("babel-runtime/core-js/object/create")["default"];
@@ -317,7 +319,7 @@ exports["default"] = function (subClass, superClass) {
 };
 
 exports.__esModule = true;
-},{"babel-runtime/core-js/object/create":6}],17:[function(require,module,exports){
+},{"babel-runtime/core-js/object/create":5}],16:[function(require,module,exports){
 "use strict";
 
 exports["default"] = function (obj) {
@@ -327,47 +329,44 @@ exports["default"] = function (obj) {
 };
 
 exports.__esModule = true;
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 require('../modules/web.dom.iterable');
 require('../modules/es6.string.iterator');
 require('../modules/core.iter-helpers');
 module.exports = require('../modules/$').core.getIterator;
-},{"../modules/$":42,"../modules/core.iter-helpers":55,"../modules/es6.string.iterator":62,"../modules/web.dom.iterable":64}],19:[function(require,module,exports){
-require('../../modules/es6.number.statics');
-module.exports = require('../../modules/$').core.Number.isSafeInteger;
-},{"../../modules/$":42,"../../modules/es6.number.statics":57}],20:[function(require,module,exports){
+},{"../modules/$":40,"../modules/core.iter-helpers":53,"../modules/es6.string.iterator":59,"../modules/web.dom.iterable":61}],18:[function(require,module,exports){
 require('../../modules/es6.object.assign');
 module.exports = require('../../modules/$').core.Object.assign;
-},{"../../modules/$":42,"../../modules/es6.object.assign":58}],21:[function(require,module,exports){
+},{"../../modules/$":40,"../../modules/es6.object.assign":55}],19:[function(require,module,exports){
 var $ = require('../../modules/$');
 module.exports = function create(P, D){
   return $.create(P, D);
 };
-},{"../../modules/$":42}],22:[function(require,module,exports){
+},{"../../modules/$":40}],20:[function(require,module,exports){
 var $ = require('../../modules/$');
 module.exports = function defineProperty(it, key, desc){
   return $.setDesc(it, key, desc);
 };
-},{"../../modules/$":42}],23:[function(require,module,exports){
+},{"../../modules/$":40}],21:[function(require,module,exports){
 var $ = require('../../modules/$');
 require('../../modules/es6.object.statics-accept-primitives');
 module.exports = function getOwnPropertyDescriptor(it, key){
   return $.getDesc(it, key);
 };
-},{"../../modules/$":42,"../../modules/es6.object.statics-accept-primitives":59}],24:[function(require,module,exports){
+},{"../../modules/$":40,"../../modules/es6.object.statics-accept-primitives":56}],22:[function(require,module,exports){
 require('../modules/es6.object.to-string');
 require('../modules/es6.string.iterator');
 require('../modules/web.dom.iterable');
 require('../modules/es6.promise');
 module.exports = require('../modules/$').core.Promise;
-},{"../modules/$":42,"../modules/es6.object.to-string":60,"../modules/es6.promise":61,"../modules/es6.string.iterator":62,"../modules/web.dom.iterable":64}],25:[function(require,module,exports){
+},{"../modules/$":40,"../modules/es6.object.to-string":57,"../modules/es6.promise":58,"../modules/es6.string.iterator":59,"../modules/web.dom.iterable":61}],23:[function(require,module,exports){
 require('../../modules/es6.symbol');
 module.exports = require('../../modules/$').core.Symbol;
-},{"../../modules/$":42,"../../modules/es6.symbol":63}],26:[function(require,module,exports){
+},{"../../modules/$":40,"../../modules/es6.symbol":60}],24:[function(require,module,exports){
 require('../../modules/es6.string.iterator');
 require('../../modules/web.dom.iterable');
 module.exports = require('../../modules/$.wks')('iterator');
-},{"../../modules/$.wks":54,"../../modules/es6.string.iterator":62,"../../modules/web.dom.iterable":64}],27:[function(require,module,exports){
+},{"../../modules/$.wks":52,"../../modules/es6.string.iterator":59,"../../modules/web.dom.iterable":61}],25:[function(require,module,exports){
 var $ = require('./$');
 function assert(condition, msg1, msg2){
   if(!condition)throw TypeError(msg2 ? msg1 + msg2 : msg1);
@@ -386,7 +385,7 @@ assert.inst = function(it, Constructor, name){
   return it;
 };
 module.exports = assert;
-},{"./$":42}],28:[function(require,module,exports){
+},{"./$":40}],26:[function(require,module,exports){
 var $        = require('./$')
   , enumKeys = require('./$.enum-keys');
 // 19.1.2.1 Object.assign(target, source, ...)
@@ -406,7 +405,7 @@ module.exports = Object.assign || function assign(target, source){
   }
   return T;
 };
-},{"./$":42,"./$.enum-keys":33}],29:[function(require,module,exports){
+},{"./$":40,"./$.enum-keys":31}],27:[function(require,module,exports){
 var $        = require('./$')
   , TAG      = require('./$.wks')('toStringTag')
   , toString = {}.toString;
@@ -422,7 +421,7 @@ cof.set = function(it, tag, stat){
   if(it && !$.has(it = stat ? it : it.prototype, TAG))$.hide(it, TAG, tag);
 };
 module.exports = cof;
-},{"./$":42,"./$.wks":54}],30:[function(require,module,exports){
+},{"./$":40,"./$.wks":52}],28:[function(require,module,exports){
 // Optional / simple context binding
 var assertFunction = require('./$.assert').fn;
 module.exports = function(fn, that, length){
@@ -442,7 +441,7 @@ module.exports = function(fn, that, length){
       return fn.apply(that, arguments);
     };
 };
-},{"./$.assert":27}],31:[function(require,module,exports){
+},{"./$.assert":25}],29:[function(require,module,exports){
 var $          = require('./$')
   , global     = $.g
   , core       = $.core
@@ -491,7 +490,7 @@ function $def(type, name, source){
   }
 }
 module.exports = $def;
-},{"./$":42}],32:[function(require,module,exports){
+},{"./$":40}],30:[function(require,module,exports){
 var $        = require('./$')
   , document = $.g.document
   , isObject = $.isObject
@@ -500,7 +499,7 @@ var $        = require('./$')
 module.exports = function(it){
   return is ? document.createElement(it) : {};
 };
-},{"./$":42}],33:[function(require,module,exports){
+},{"./$":40}],31:[function(require,module,exports){
 var $ = require('./$');
 module.exports = function(it){
   var keys       = $.getKeys(it)
@@ -511,7 +510,7 @@ module.exports = function(it){
   });
   return keys;
 };
-},{"./$":42}],34:[function(require,module,exports){
+},{"./$":40}],32:[function(require,module,exports){
 var ctx  = require('./$.ctx')
   , get  = require('./$.iter').get
   , call = require('./$.iter-call');
@@ -525,13 +524,13 @@ module.exports = function(iterable, entries, fn, that){
     }
   }
 };
-},{"./$.ctx":30,"./$.iter":41,"./$.iter-call":38}],35:[function(require,module,exports){
+},{"./$.ctx":28,"./$.iter":39,"./$.iter-call":36}],33:[function(require,module,exports){
 module.exports = function($){
   $.FW   = false;
   $.path = $.core;
   return $;
 };
-},{}],36:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 // fallback for IE11 buggy Object.getOwnPropertyNames with iframe and window
 var $ = require('./$')
   , toString = {}.toString
@@ -552,7 +551,7 @@ module.exports.get = function getOwnPropertyNames(it){
   if(windowNames && toString.call(it) == '[object Window]')return getWindowNames(it);
   return getNames($.toObject(it));
 };
-},{"./$":42}],37:[function(require,module,exports){
+},{"./$":40}],35:[function(require,module,exports){
 // Fast apply
 // http://jsperf.lnkit.com/fast-apply/5
 module.exports = function(fn, args, that){
@@ -572,7 +571,7 @@ module.exports = function(fn, args, that){
                       : fn.call(that, args[0], args[1], args[2], args[3], args[4]);
   } return              fn.apply(that, args);
 };
-},{}],38:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var assertObject = require('./$.assert').obj;
 function close(iterator){
   var ret = iterator['return'];
@@ -588,7 +587,7 @@ function call(iterator, fn, value, entries){
 }
 call.close = close;
 module.exports = call;
-},{"./$.assert":27}],39:[function(require,module,exports){
+},{"./$.assert":25}],37:[function(require,module,exports){
 var $def            = require('./$.def')
   , $redef          = require('./$.redef')
   , $               = require('./$')
@@ -624,7 +623,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE)
     if($.FW && $.has(proto, FF_ITERATOR))$iter.set(IteratorPrototype, $.that);
   }
   // Define iterator
-  if($.FW)$iter.set(proto, _default);
+  if($.FW || FORCE)$iter.set(proto, _default);
   // Plug for library
   Iterators[NAME] = _default;
   Iterators[TAG]  = $.that;
@@ -639,7 +638,7 @@ module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCE)
     } else $def($def.P + $def.F * $iter.BUGGY, NAME, methods);
   }
 };
-},{"./$":42,"./$.cof":29,"./$.def":31,"./$.iter":41,"./$.redef":45,"./$.wks":54}],40:[function(require,module,exports){
+},{"./$":40,"./$.cof":27,"./$.def":29,"./$.iter":39,"./$.redef":43,"./$.wks":52}],38:[function(require,module,exports){
 var SYMBOL_ITERATOR = require('./$.wks')('iterator')
   , SAFE_CLOSING    = false;
 try {
@@ -659,7 +658,7 @@ module.exports = function(exec){
   } catch(e){ /* empty */ }
   return safe;
 };
-},{"./$.wks":54}],41:[function(require,module,exports){
+},{"./$.wks":52}],39:[function(require,module,exports){
 'use strict';
 var $                 = require('./$')
   , cof               = require('./$.cof')
@@ -709,7 +708,7 @@ module.exports = {
     cof.set(Constructor, NAME + ' Iterator');
   }
 };
-},{"./$":42,"./$.assert":27,"./$.cof":29,"./$.shared":48,"./$.wks":54}],42:[function(require,module,exports){
+},{"./$":40,"./$.assert":25,"./$.cof":27,"./$.shared":46,"./$.wks":52}],40:[function(require,module,exports){
 'use strict';
 var global = typeof self != 'undefined' ? self : Function('return this')()
   , core   = {}
@@ -806,7 +805,7 @@ var $ = module.exports = require('./$.fw')({
 /* eslint-disable no-undef */
 if(typeof __e != 'undefined')__e = core;
 if(typeof __g != 'undefined')__g = global;
-},{"./$.fw":35}],43:[function(require,module,exports){
+},{"./$.fw":33}],41:[function(require,module,exports){
 var $ = require('./$');
 module.exports = function(object, el){
   var O      = $.toObject(object)
@@ -816,19 +815,19 @@ module.exports = function(object, el){
     , key;
   while(length > index)if(O[key = keys[index++]] === el)return key;
 };
-},{"./$":42}],44:[function(require,module,exports){
+},{"./$":40}],42:[function(require,module,exports){
 var $redef = require('./$.redef');
 module.exports = function(target, src){
   for(var key in src)$redef(target, key, src[key]);
   return target;
 };
-},{"./$.redef":45}],45:[function(require,module,exports){
+},{"./$.redef":43}],43:[function(require,module,exports){
 module.exports = require('./$').hide;
-},{"./$":42}],46:[function(require,module,exports){
+},{"./$":40}],44:[function(require,module,exports){
 module.exports = Object.is || function is(x, y){
   return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
 };
-},{}],47:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 // Works with __proto__ only. Old v8 can't work with null proto objects.
 /* eslint-disable no-proto */
 var $      = require('./$')
@@ -854,14 +853,14 @@ module.exports = {
     : undefined),
   check: check
 };
-},{"./$":42,"./$.assert":27,"./$.ctx":30}],48:[function(require,module,exports){
+},{"./$":40,"./$.assert":25,"./$.ctx":28}],46:[function(require,module,exports){
 var $      = require('./$')
   , SHARED = '__core-js_shared__'
   , store  = $.g[SHARED] || $.hide($.g, SHARED, {})[SHARED];
 module.exports = function(key){
   return store[key] || (store[key] = {});
 };
-},{"./$":42}],49:[function(require,module,exports){
+},{"./$":40}],47:[function(require,module,exports){
 var $       = require('./$')
   , SPECIES = require('./$.wks')('species');
 module.exports = function(C){
@@ -870,7 +869,7 @@ module.exports = function(C){
     get: $.that
   });
 };
-},{"./$":42,"./$.wks":54}],50:[function(require,module,exports){
+},{"./$":40,"./$.wks":52}],48:[function(require,module,exports){
 // true  -> String#at
 // false -> String#codePointAt
 var $ = require('./$');
@@ -888,7 +887,7 @@ module.exports = function(TO_STRING){
         : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
   };
 };
-},{"./$":42}],51:[function(require,module,exports){
+},{"./$":40}],49:[function(require,module,exports){
 'use strict';
 var $      = require('./$')
   , ctx    = require('./$.ctx')
@@ -970,34 +969,28 @@ module.exports = {
   set:   setTask,
   clear: clearTask
 };
-},{"./$":42,"./$.cof":29,"./$.ctx":30,"./$.dom-create":32,"./$.invoke":37}],52:[function(require,module,exports){
+},{"./$":40,"./$.cof":27,"./$.ctx":28,"./$.dom-create":30,"./$.invoke":35}],50:[function(require,module,exports){
 var sid = 0;
 function uid(key){
   return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++sid + Math.random()).toString(36));
 }
 uid.safe = require('./$').g.Symbol || uid;
 module.exports = uid;
-},{"./$":42}],53:[function(require,module,exports){
-// 22.1.3.31 Array.prototype[@@unscopables]
-var $           = require('./$')
-  , UNSCOPABLES = require('./$.wks')('unscopables');
-if($.FW && !(UNSCOPABLES in []))$.hide(Array.prototype, UNSCOPABLES, {});
-module.exports = function(key){
-  if($.FW)[][UNSCOPABLES][key] = true;
-};
-},{"./$":42,"./$.wks":54}],54:[function(require,module,exports){
+},{"./$":40}],51:[function(require,module,exports){
+module.exports = function(){ /* empty */ };
+},{}],52:[function(require,module,exports){
 var global = require('./$').g
   , store  = require('./$.shared')('wks');
 module.exports = function(name){
   return store[name] || (store[name] =
     global.Symbol && global.Symbol[name] || require('./$.uid').safe('Symbol.' + name));
 };
-},{"./$":42,"./$.shared":48,"./$.uid":52}],55:[function(require,module,exports){
+},{"./$":40,"./$.shared":46,"./$.uid":50}],53:[function(require,module,exports){
 var core  = require('./$').core
   , $iter = require('./$.iter');
 core.isIterable  = $iter.is;
 core.getIterator = $iter.get;
-},{"./$":42,"./$.iter":41}],56:[function(require,module,exports){
+},{"./$":40,"./$.iter":39}],54:[function(require,module,exports){
 var $          = require('./$')
   , setUnscope = require('./$.unscope')
   , ITER       = require('./$.uid').safe('iter')
@@ -1032,47 +1025,11 @@ Iterators.Arguments = Iterators.Array;
 setUnscope('keys');
 setUnscope('values');
 setUnscope('entries');
-},{"./$":42,"./$.iter":41,"./$.iter-define":39,"./$.uid":52,"./$.unscope":53}],57:[function(require,module,exports){
-var $     = require('./$')
-  , $def  = require('./$.def')
-  , abs   = Math.abs
-  , floor = Math.floor
-  , _isFinite = $.g.isFinite
-  , MAX_SAFE_INTEGER = 0x1fffffffffffff; // pow(2, 53) - 1 == 9007199254740991;
-function isInteger(it){
-  return !$.isObject(it) && _isFinite(it) && floor(it) === it;
-}
-$def($def.S, 'Number', {
-  // 20.1.2.1 Number.EPSILON
-  EPSILON: Math.pow(2, -52),
-  // 20.1.2.2 Number.isFinite(number)
-  isFinite: function isFinite(it){
-    return typeof it == 'number' && _isFinite(it);
-  },
-  // 20.1.2.3 Number.isInteger(number)
-  isInteger: isInteger,
-  // 20.1.2.4 Number.isNaN(number)
-  isNaN: function isNaN(number){
-    return number != number;
-  },
-  // 20.1.2.5 Number.isSafeInteger(number)
-  isSafeInteger: function isSafeInteger(number){
-    return isInteger(number) && abs(number) <= MAX_SAFE_INTEGER;
-  },
-  // 20.1.2.6 Number.MAX_SAFE_INTEGER
-  MAX_SAFE_INTEGER: MAX_SAFE_INTEGER,
-  // 20.1.2.10 Number.MIN_SAFE_INTEGER
-  MIN_SAFE_INTEGER: -MAX_SAFE_INTEGER,
-  // 20.1.2.12 Number.parseFloat(string)
-  parseFloat: parseFloat,
-  // 20.1.2.13 Number.parseInt(string, radix)
-  parseInt: parseInt
-});
-},{"./$":42,"./$.def":31}],58:[function(require,module,exports){
+},{"./$":40,"./$.iter":39,"./$.iter-define":37,"./$.uid":50,"./$.unscope":51}],55:[function(require,module,exports){
 // 19.1.3.1 Object.assign(target, source)
 var $def = require('./$.def');
 $def($def.S, 'Object', {assign: require('./$.assign')});
-},{"./$.assign":28,"./$.def":31}],59:[function(require,module,exports){
+},{"./$.assign":26,"./$.def":29}],56:[function(require,module,exports){
 var $        = require('./$')
   , $def     = require('./$.def')
   , isObject = $.isObject
@@ -1109,7 +1066,7 @@ $.each.call(('freeze,seal,preventExtensions,isFrozen,isSealed,isExtensible,' +
   }
   $def($def.S + $def.F * forced, 'Object', method);
 });
-},{"./$":42,"./$.def":31,"./$.get-names":36}],60:[function(require,module,exports){
+},{"./$":40,"./$.def":29,"./$.get-names":34}],57:[function(require,module,exports){
 'use strict';
 // 19.1.3.6 Object.prototype.toString()
 var cof = require('./$.cof')
@@ -1120,7 +1077,7 @@ if(require('./$').FW && cof(tmp) != 'z'){
     return '[object ' + cof.classof(this) + ']';
   }, true);
 }
-},{"./$":42,"./$.cof":29,"./$.redef":45,"./$.wks":54}],61:[function(require,module,exports){
+},{"./$":40,"./$.cof":27,"./$.redef":43,"./$.wks":52}],58:[function(require,module,exports){
 'use strict';
 var $        = require('./$')
   , ctx      = require('./$.ctx')
@@ -1364,7 +1321,7 @@ $def($def.S + $def.F * !(useNative && require('./$.iter-detect')(function(iter){
     });
   }
 });
-},{"./$":42,"./$.assert":27,"./$.cof":29,"./$.ctx":30,"./$.def":31,"./$.for-of":34,"./$.iter-detect":40,"./$.mix":44,"./$.same":46,"./$.set-proto":47,"./$.species":49,"./$.task":51,"./$.uid":52,"./$.wks":54}],62:[function(require,module,exports){
+},{"./$":40,"./$.assert":25,"./$.cof":27,"./$.ctx":28,"./$.def":29,"./$.for-of":32,"./$.iter-detect":38,"./$.mix":42,"./$.same":44,"./$.set-proto":45,"./$.species":47,"./$.task":49,"./$.uid":50,"./$.wks":52}],59:[function(require,module,exports){
 var set   = require('./$').set
   , $at   = require('./$.string-at')(true)
   , ITER  = require('./$.uid').safe('iter')
@@ -1385,7 +1342,7 @@ require('./$.iter-define')(String, 'String', function(iterated){
   iter.i += point.length;
   return step(0, point);
 });
-},{"./$":42,"./$.iter":41,"./$.iter-define":39,"./$.string-at":50,"./$.uid":52}],63:[function(require,module,exports){
+},{"./$":40,"./$.iter":39,"./$.iter-define":37,"./$.string-at":48,"./$.uid":50}],60:[function(require,module,exports){
 'use strict';
 // ECMAScript 6 symbols shim
 var $        = require('./$')
@@ -1576,7 +1533,7 @@ setTag($Symbol, 'Symbol');
 setTag(Math, 'Math', true);
 // 24.3.3 JSON[@@toStringTag]
 setTag($.g.JSON, 'JSON', true);
-},{"./$":42,"./$.assert":27,"./$.cof":29,"./$.def":31,"./$.enum-keys":33,"./$.get-names":36,"./$.keyof":43,"./$.redef":45,"./$.shared":48,"./$.uid":52,"./$.wks":54}],64:[function(require,module,exports){
+},{"./$":40,"./$.assert":25,"./$.cof":27,"./$.def":29,"./$.enum-keys":31,"./$.get-names":34,"./$.keyof":41,"./$.redef":43,"./$.shared":46,"./$.uid":50,"./$.wks":52}],61:[function(require,module,exports){
 require('./es6.array.iterator');
 var $           = require('./$')
   , Iterators   = require('./$.iter').Iterators
@@ -1591,7 +1548,7 @@ if($.FW){
   if(HTC && !(ITERATOR in HTCProto))$.hide(HTCProto, ITERATOR, ArrayValues);
 }
 Iterators.NodeList = Iterators.HTMLCollection = ArrayValues;
-},{"./$":42,"./$.iter":41,"./$.wks":54,"./es6.array.iterator":56}],65:[function(require,module,exports){
+},{"./$":40,"./$.iter":39,"./$.wks":52,"./es6.array.iterator":54}],62:[function(require,module,exports){
 (function (global){
 // This method of obtaining a reference to the global object needs to be
 // kept identical to the way it is obtained in runtime.js
@@ -1624,7 +1581,7 @@ if (hadRuntime) {
 module.exports = { "default": module.exports, __esModule: true };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./runtime":66}],66:[function(require,module,exports){
+},{"./runtime":63}],63:[function(require,module,exports){
 (function (process,global){
 /**
  * Copyright (c) 2014, Facebook, Inc.
@@ -2229,7 +2186,7 @@ var _Promise = require("babel-runtime/core-js/promise")["default"];
 // use indirect eval (which violates Content Security Policy).
 typeof global === "object" ? global : typeof window === "object" ? window : typeof self === "object" ? self : undefined);
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":68,"babel-runtime/core-js/object/create":6,"babel-runtime/core-js/promise":9,"babel-runtime/core-js/symbol":10,"babel-runtime/core-js/symbol/iterator":11}],67:[function(require,module,exports){
+},{"_process":65,"babel-runtime/core-js/object/create":5,"babel-runtime/core-js/promise":8,"babel-runtime/core-js/symbol":9,"babel-runtime/core-js/symbol/iterator":10}],64:[function(require,module,exports){
 (function (process,global){
 /* @preserve
  * The MIT License (MIT)
@@ -2256,7 +2213,7 @@ typeof global === "object" ? global : typeof window === "object" ? window : type
  * 
  */
 /**
- * bluebird build version 2.9.25
+ * bluebird build version 2.9.27
  * Features enabled: core, race, call_get, generators, map, nodeify, promisify, props, reduce, settle, some, cancel, using, filter, any, each, timers
 */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Promise=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof _dereq_=="function"&&_dereq_;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof _dereq_=="function"&&_dereq_;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
@@ -3515,6 +3472,10 @@ var returner = function () {
 var thrower = function () {
     throw this;
 };
+var returnUndefined = function() {};
+var throwUndefined = function() {
+    throw undefined;
+};
 
 var wrapper = function (value, action) {
     if (action === 1) {
@@ -3531,6 +3492,8 @@ var wrapper = function (value, action) {
 
 Promise.prototype["return"] =
 Promise.prototype.thenReturn = function (value) {
+    if (value === undefined) return this.then(returnUndefined);
+
     if (wrapsPrimitiveReceiver && isPrimitive(value)) {
         return this._then(
             wrapper(value, 2),
@@ -3545,6 +3508,8 @@ Promise.prototype.thenReturn = function (value) {
 
 Promise.prototype["throw"] =
 Promise.prototype.thenThrow = function (reason) {
+    if (reason === undefined) return this.then(throwUndefined);
+
     if (wrapsPrimitiveReceiver && isPrimitive(reason)) {
         return this._then(
             wrapper(reason, 1),
@@ -6083,23 +6048,16 @@ Promise.reduce = function (promises, fn, initialValue, _each) {
 },{"./async.js":2,"./util.js":38}],31:[function(_dereq_,module,exports){
 "use strict";
 var schedule;
+var util = _dereq_("./util");
 var noAsyncScheduler = function() {
     throw new Error("No async scheduler available\u000a\u000a    See http://goo.gl/m3OTXk\u000a");
 };
-if (_dereq_("./util.js").isNode) {
-    var version = process.versions.node.split(".").map(Number);
-    schedule = (version[0] === 0 && version[1] > 10) || (version[0] > 0)
-        ? global.setImmediate : process.nextTick;
-
-    if (!schedule) {
-        if (typeof setImmediate !== "undefined") {
-            schedule = setImmediate;
-        } else if (typeof setTimeout !== "undefined") {
-            schedule = setTimeout;
-        } else {
-            schedule = noAsyncScheduler;
-        }
-    }
+if (util.isNode && typeof MutationObserver === "undefined") {
+    var GlobalSetImmediate = global.setImmediate;
+    var ProcessNextTick = process.nextTick;
+    schedule = util.isRecentNode
+                ? function(fn) { GlobalSetImmediate.call(global, fn); }
+                : function(fn) { ProcessNextTick.call(process, fn); };
 } else if (typeof MutationObserver !== "undefined") {
     schedule = function(fn) {
         var div = document.createElement("div");
@@ -6121,7 +6079,7 @@ if (_dereq_("./util.js").isNode) {
 }
 module.exports = schedule;
 
-},{"./util.js":38}],32:[function(_dereq_,module,exports){
+},{"./util":38}],32:[function(_dereq_,module,exports){
 "use strict";
 module.exports =
     function(Promise, PromiseArray) {
@@ -7020,6 +6978,10 @@ var ret = {
     isNode: typeof process !== "undefined" &&
         classString(process).toLowerCase() === "[object process]"
 };
+ret.isRecentNode = ret.isNode && (function() {
+    var version = process.versions.node.split(".").map(Number);
+    return (version[0] === 0 && version[1] > 10) || (version[0] > 0);
+})();
 try {throw new Error(); } catch (e) {ret.lastLineError = e;}
 module.exports = ret;
 
@@ -7329,7 +7291,7 @@ function isUndefined(arg) {
 },{}]},{},[4])(4)
 });                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"_process":68}],68:[function(require,module,exports){
+},{"_process":65}],65:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -7389,7 +7351,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],69:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -7411,7 +7373,7 @@ var _tabs2 = _interopRequireDefault(_tabs);
 exports.storage = _storage2['default'];
 exports.tabs = _tabs2['default'];
 
-},{"./storage":70,"./tabs":71,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/interop-require-default":17}],70:[function(require,module,exports){
+},{"./storage":67,"./tabs":68,"babel-runtime/core-js/object/define-property":6,"babel-runtime/helpers/interop-require-default":16}],67:[function(require,module,exports){
 "use strict";
 
 var _createClass = require("babel-runtime/helpers/create-class")["default"];
@@ -7475,7 +7437,7 @@ var _ = (function () {
 exports["default"] = _;
 module.exports = exports["default"];
 
-},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":9,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/create-class":13}],71:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":6,"babel-runtime/core-js/promise":8,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12}],68:[function(require,module,exports){
 'use strict';
 
 var _createClass = require('babel-runtime/helpers/create-class')['default'];
@@ -7583,9 +7545,9 @@ var _ = (function () {
 exports['default'] = _;
 module.exports = exports['default'];
 
-},{"babel-runtime/core-js/object/assign":5,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":9,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/create-class":13}],72:[function(require,module,exports){
-arguments[4][67][0].apply(exports,arguments)
-},{"_process":68,"dup":67}],73:[function(require,module,exports){
+},{"babel-runtime/core-js/object/assign":4,"babel-runtime/core-js/object/define-property":6,"babel-runtime/core-js/promise":8,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12}],69:[function(require,module,exports){
+arguments[4][64][0].apply(exports,arguments)
+},{"_process":65,"dup":64}],70:[function(require,module,exports){
 'use strict';
 
 var _createClass = require('babel-runtime/helpers/create-class')['default'];
@@ -7593,8 +7555,6 @@ var _createClass = require('babel-runtime/helpers/create-class')['default'];
 var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
-
-var _Number$isSafeInteger = require('babel-runtime/core-js/number/is-safe-integer')['default'];
 
 var _regeneratorRuntime = require('babel-runtime/regenerator')['default'];
 
@@ -7609,20 +7569,16 @@ var _bluebird = require('bluebird');
 var _bluebird2 = _interopRequireDefault(_bluebird);
 
 var captureVisibleTabFull = (function () {
-    function captureVisibleTabFull(_ref) {
-        var overWriteDevicePixelRatio = _ref.overWriteDevicePixelRatio;
-
+    function captureVisibleTabFull() {
         _classCallCheck(this, captureVisibleTabFull);
-
-        this.overWriteDevicePixelRatio = overWriteDevicePixelRatio;
     }
 
     _createClass(captureVisibleTabFull, [{
         key: 'capture',
-        value: function capture(_ref2) {
-            var tab = _ref2.tab;
+        value: function capture(_ref) {
+            var tab = _ref.tab;
 
-            var _ref3, contentFullSize, maxIndexSize, devicePixelRatio, canvas, context;
+            var _ref2, contentFullSize, maxIndexSize, devicePixelRatio, canvas, context;
 
             return _regeneratorRuntime.async(function capture$(context$2$0) {
                 var _this = this;
@@ -7630,51 +7586,51 @@ var captureVisibleTabFull = (function () {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return this._loadContentScript(tab);
+                        return _regeneratorRuntime.awrap(this._loadContentScript(tab));
 
                     case 2:
                         context$2$0.next = 4;
-                        return this._sendMessage(tab, { 'type': 'ready' });
+                        return _regeneratorRuntime.awrap(this._sendMessage(tab, { 'type': 'ready' }));
 
                     case 4:
-                        _ref3 = context$2$0.sent;
-                        contentFullSize = _ref3.contentFullSize;
-                        maxIndexSize = _ref3.maxIndexSize;
-                        devicePixelRatio = _ref3.devicePixelRatio;
+                        _ref2 = context$2$0.sent;
+                        contentFullSize = _ref2.contentFullSize;
+                        maxIndexSize = _ref2.maxIndexSize;
+                        devicePixelRatio = _ref2.devicePixelRatio;
 
-                        this._setDevicePixelRatio(this.overWriteDevicePixelRatio || devicePixelRatio);
+                        this._setDevicePixelRatio(devicePixelRatio);
                         canvas = this._makeCanvas({ contentFullSize: contentFullSize });
                         context = canvas.getContext('2d');
                         context$2$0.next = 13;
-                        return Array(maxIndexSize).join(',').split(',').reduce(function (base, _, index) {
+                        return _regeneratorRuntime.awrap(Array(maxIndexSize).join(',').split(',').reduce(function (base, _, index) {
                             return base.then(function () {
                                 return _this._sendMessage(tab, { 'type': 'doScroll', index: index });
-                            }).then(function (_ref4) {
-                                var top = _ref4.top;
-                                var left = _ref4.left;
+                            }).then(function (_ref3) {
+                                var top = _ref3.top;
+                                var left = _ref3.left;
 
                                 return _this._sleep(150).then(function () {
                                     return { top: top, left: left };
                                 });
-                            }).then(function (_ref5) {
-                                var top = _ref5.top;
-                                var left = _ref5.left;
+                            }).then(function (_ref4) {
+                                var top = _ref4.top;
+                                var left = _ref4.left;
 
                                 return _this._doCapture(tab).then(function (dataURI) {
                                     return { dataURI: dataURI, top: top, left: left };
                                 });
-                            }).then(function (_ref6) {
-                                var dataURI = _ref6.dataURI;
-                                var top = _ref6.top;
-                                var left = _ref6.left;
+                            }).then(function (_ref5) {
+                                var dataURI = _ref5.dataURI;
+                                var top = _ref5.top;
+                                var left = _ref5.left;
 
                                 return _this._drawImage({ context: context, dataURI: dataURI, left: left, top: top });
                             });
-                        }, _bluebird2['default'].resolve());
+                        }, _bluebird2['default'].resolve()));
 
                     case 13:
                         context$2$0.next = 15;
-                        return this._sendMessage(tab, { 'type': 'done' });
+                        return _regeneratorRuntime.awrap(this._sendMessage(tab, { 'type': 'done' }));
 
                     case 15:
                         return context$2$0.abrupt('return', canvas);
@@ -7706,8 +7662,8 @@ var captureVisibleTabFull = (function () {
         }
     }, {
         key: '_makeCanvas',
-        value: function _makeCanvas(_ref7) {
-            var contentFullSize = _ref7.contentFullSize;
+        value: function _makeCanvas(_ref6) {
+            var contentFullSize = _ref6.contentFullSize;
 
             var canvas = document.createElement('canvas');
             canvas.width = this._changeScale(contentFullSize.width);
@@ -7715,9 +7671,14 @@ var captureVisibleTabFull = (function () {
             return canvas;
         }
     }, {
+        key: '_getContentScriptCode',
+        value: function _getContentScriptCode() {
+            return '(' + contentScript.toString().replace('{', '{' + babelCare) + ')();';
+        }
+    }, {
         key: '_loadContentScript',
         value: function _loadContentScript(tab) {
-            var code = '(' + contentScript.toString() + ')();';
+            var code = this._getContentScriptCode();
             return new _bluebird2['default'](function (resolve, reject) {
                 chrome.tabs.executeScript(tab.id, { code: code }, function () {
                     return resolve();
@@ -7744,13 +7705,13 @@ var captureVisibleTabFull = (function () {
         }
     }, {
         key: '_drawImage',
-        value: function _drawImage(_ref8) {
+        value: function _drawImage(_ref7) {
             var _this2 = this;
 
-            var context = _ref8.context;
-            var dataURI = _ref8.dataURI;
-            var left = _ref8.left;
-            var top = _ref8.top;
+            var context = _ref7.context;
+            var dataURI = _ref7.dataURI;
+            var left = _ref7.left;
+            var top = _ref7.top;
 
             return new _bluebird2['default'](function (resolve) {
                 console.assert('string' === typeof dataURI);
@@ -7769,26 +7730,11 @@ var captureVisibleTabFull = (function () {
 
 exports['default'] = captureVisibleTabFull;
 
+var babelCare = '\nvar _classCallCheck = function (instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError(\'Cannot call a class as a function\'); } };\nvar _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if (\'value\' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();\n';
 function contentScript() {
-    var _classCallCheck = function _classCallCheck(instance, Constructor) {
-        if (!(instance instanceof Constructor)) {
-            throw new TypeError('Cannot call a class as a function');
-        }
-    };
-
-    var _createClass = (function () {
-        function defineProperties(target, props) {
-            for (var i = 0; i < props.length; i++) {
-                var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ('value' in descriptor) descriptor.writable = true;_Object$defineProperty(target, descriptor.key, descriptor);
-            }
-        }return function (Constructor, protoProps, staticProps) {
-            if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-        };
-    })();
-
     var BasePosition = (function () {
-        function BasePosition(_ref9) {
-            var global = _ref9.global;
+        function BasePosition(_ref8) {
+            var global = _ref8.global;
 
             _classCallCheck(this, BasePosition);
 
@@ -7812,10 +7758,10 @@ function contentScript() {
     })();
 
     var ContentSize = (function () {
-        function ContentSize(_ref10) {
-            var global = _ref10.global;
-            var _ref10$padding = _ref10.padding;
-            var padding = _ref10$padding === undefined ? 200 : _ref10$padding;
+        function ContentSize(_ref9) {
+            var global = _ref9.global;
+            var _ref9$padding = _ref9.padding;
+            var padding = _ref9$padding === undefined ? 200 : _ref9$padding;
 
             _classCallCheck(this, ContentSize);
 
@@ -7850,7 +7796,8 @@ function contentScript() {
             value: function getFullSize() {
                 return {
                     'width': this.fullWidth,
-                    'height': this.fullHeight };
+                    'height': this.fullHeight
+                };
             }
         }, {
             key: '_getMaxSize',
@@ -7864,8 +7811,8 @@ function contentScript() {
     })();
 
     var Scroller = (function () {
-        function Scroller(_ref11) {
-            var global = _ref11.global;
+        function Scroller(_ref10) {
+            var global = _ref10.global;
 
             _classCallCheck(this, Scroller);
 
@@ -7900,15 +7847,12 @@ function contentScript() {
                 var width = _contentFullSize.width;
                 var height = _contentFullSize.height;
 
-                console.assert(_Number$isSafeInteger(width));
-                console.assert(_Number$isSafeInteger(height));
                 return { width: width, height: height };
             }
         }, {
             key: 'getScopeSize',
             value: function getScopeSize() {
                 var length = this.scopes.length;
-                console.assert(_Number$isSafeInteger(length));
                 return length;
             }
         }, {
@@ -7925,8 +7869,8 @@ function contentScript() {
     var global = 'undefined' !== typeof window ? window : 'undefined' !== typeof global ? global : 'undefined' !== typeof self ? self : {};
     var TypeCommands = {
         'context': {},
-        ready: function ready(_ref12) {
-            var request = _ref12.request;
+        ready: function ready(_ref11) {
+            var request = _ref11.request;
 
             this.context = {};
             this.context.scroller = new Scroller({ global: global });
@@ -7937,20 +7881,19 @@ function contentScript() {
                 'devicePixelRatio': global.devicePixelRatio || 1
             };
         },
-        doScroll: function doScroll(_ref13) {
-            var request = _ref13.request;
+        doScroll: function doScroll(_ref12) {
+            var request = _ref12.request;
             var index = request.index;
 
             var result = this.context.scroller.doScroll(index);
-            console.assert(Array.isArray(result));
             return {
                 'type': 'ScrollResult',
                 'left': result[0],
                 'top': result[1]
             };
         },
-        done: function done(_ref14) {
-            var request = _ref14.request;
+        done: function done(_ref13) {
+            var request = _ref13.request;
 
             this.context.scroller.destroy();
             this.context = {};
@@ -7969,7 +7912,7 @@ function contentScript() {
 }
 module.exports = exports['default'];
 
-},{"babel-runtime/core-js/number/is-safe-integer":4,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/create-class":13,"babel-runtime/helpers/interop-require-default":17,"babel-runtime/regenerator":65,"bluebird":72}],74:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":6,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12,"babel-runtime/helpers/interop-require-default":16,"babel-runtime/regenerator":62,"bluebird":69}],71:[function(require,module,exports){
 (function (global){
 /** 
  * Copyright 2013 - Eric Bidelman
@@ -8765,7 +8708,7 @@ var Filer = new function() {
 };
 module.exports = Filer;
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],75:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 (function (global){
 if (typeof window !== "undefined") {
     module.exports = window;
@@ -8778,7 +8721,7 @@ if (typeof window !== "undefined") {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],76:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
     // AMD. Register as an anonymous module.
@@ -9446,7 +9389,7 @@ return monapt;
 
 }));
 
-},{}],77:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -9485,16 +9428,20 @@ if (!HTMLCanvasElement.prototype.toBlob) {
     });
 }
 
-},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/interop-require-default":17,"bluebird":67,"global":75,"monapt":76}],78:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":6,"babel-runtime/helpers/interop-require-default":16,"bluebird":64,"global":72,"monapt":73}],75:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
 
 var _get = require('babel-runtime/helpers/get')['default'];
 
+var _createClass = require('babel-runtime/helpers/create-class')['default'];
+
 var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
 
 var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
 
@@ -9519,10 +9466,20 @@ var Model = (function (_BaseModel) {
         _get(Object.getPrototypeOf(Model.prototype), 'constructor', this).call(this, id);
         this.url = url;
         this.blob = blob;
-        this.captureTime = captureTime;
+        this.captureTime = 'string' === typeof captureTime ? new Date(captureTime) : captureTime;
     }
 
     _inherits(Model, _BaseModel);
+
+    _createClass(Model, [{
+        key: 'extract',
+        value: function extract() {
+            return _Object$assign({}, _get(Object.getPrototypeOf(Model.prototype), 'extract', this).call(this), {
+                url: this.url,
+                captureTime: this.captureTime + ''
+            });
+        }
+    }]);
 
     return Model;
 })(_baseModel2['default']);
@@ -9530,7 +9487,7 @@ var Model = (function (_BaseModel) {
 exports['default'] = Model;
 module.exports = exports['default'];
 
-},{"../base/Model":82,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/get":15,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/interop-require-default":17}],79:[function(require,module,exports){
+},{"../base/Model":79,"babel-runtime/core-js/object/assign":4,"babel-runtime/core-js/object/define-property":6,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12,"babel-runtime/helpers/get":14,"babel-runtime/helpers/inherits":15,"babel-runtime/helpers/interop-require-default":16}],76:[function(require,module,exports){
 'use strict';
 
 var _createClass = require('babel-runtime/helpers/create-class')['default'];
@@ -9573,12 +9530,12 @@ var Repository = (function () {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return filer.open(id);
+                        return _regeneratorRuntime.awrap(filer.open(id));
 
                     case 2:
                         file = context$2$0.sent;
                         context$2$0.next = 5;
-                        return this.storageAPI.getLocal(id);
+                        return _regeneratorRuntime.awrap(this.storageAPI.getLocal(id));
 
                     case 5:
                         data = context$2$0.sent;
@@ -9603,18 +9560,15 @@ var Repository = (function () {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return this.filer.write(model.getId(), {
+                        return _regeneratorRuntime.awrap(this.filer.write(model.getId(), {
                             data: model.blob,
                             type: 'image/png',
                             append: false
-                        });
+                        }));
 
                     case 2:
                         context$2$0.next = 4;
-                        return this.storageAPI.setLocal(_defineProperty({}, model.getId(), {
-                            url: model['url'],
-                            captureTime: model['captureTime'] + ''
-                        }));
+                        return _regeneratorRuntime.awrap(this.storageAPI.setLocal(_defineProperty({}, model.getId(), model.extract())));
 
                     case 4:
                     case 'end':
@@ -9630,7 +9584,7 @@ var Repository = (function () {
 exports['default'] = Repository;
 module.exports = exports['default'];
 
-},{"./Model":78,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/create-class":13,"babel-runtime/helpers/define-property":14,"babel-runtime/helpers/interop-require-default":17,"babel-runtime/regenerator":65}],80:[function(require,module,exports){
+},{"./Model":75,"babel-runtime/core-js/object/define-property":6,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12,"babel-runtime/helpers/define-property":13,"babel-runtime/helpers/interop-require-default":16,"babel-runtime/regenerator":62}],77:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -9680,29 +9634,29 @@ var Model = (function (_BaseModel) {
             var tab = _ref2.tab;
             var tabAPI = _ref2.tabAPI;
             var captureVisibleTab = _ref2.captureVisibleTab;
-            var canvas;
+            var canvas, blob;
             return _regeneratorRuntime.async(function capture$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return tabAPI.update(tab.id, {
+                        return _regeneratorRuntime.awrap(tabAPI.update(tab.id, {
                             'url': this.url
-                        });
+                        }));
 
                     case 2:
                         context$2$0.next = 4;
-                        return tabAPI.waitComplete(tab.id);
+                        return _regeneratorRuntime.awrap(tabAPI.waitComplete(tab.id));
 
                     case 4:
                         context$2$0.next = 6;
-                        return captureVisibleTab.capture({ tab: tab });
+                        return _regeneratorRuntime.awrap(captureVisibleTab.capture({ tab: tab }));
 
                     case 6:
                         canvas = context$2$0.sent;
                         context$2$0.next = 9;
-                        return new _Promise(function (r) {
+                        return _regeneratorRuntime.awrap(new _Promise(function (r) {
                             return canvas.toBlob(r);
-                        });
+                        }));
 
                     case 9:
                         blob = context$2$0.sent;
@@ -9722,7 +9676,7 @@ var Model = (function (_BaseModel) {
 exports['default'] = Model;
 module.exports = exports['default'];
 
-},{"../Capture/Model":78,"../base/Model":82,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":9,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/create-class":13,"babel-runtime/helpers/get":15,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/interop-require-default":17,"babel-runtime/regenerator":65}],81:[function(require,module,exports){
+},{"../Capture/Model":75,"../base/Model":79,"babel-runtime/core-js/object/define-property":6,"babel-runtime/core-js/promise":8,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12,"babel-runtime/helpers/get":14,"babel-runtime/helpers/inherits":15,"babel-runtime/helpers/interop-require-default":16,"babel-runtime/regenerator":62}],78:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -9738,6 +9692,8 @@ var _Object$defineProperty = require('babel-runtime/core-js/object/define-proper
 var _regeneratorRuntime = require('babel-runtime/regenerator')['default'];
 
 var _getIterator = require('babel-runtime/core-js/get-iterator')['default'];
+
+var _Object$assign = require('babel-runtime/core-js/object/assign')['default'];
 
 var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
 
@@ -9836,6 +9792,11 @@ var Model = (function (_BaseModel) {
                 }
             }, loadURLList, this, [[3, 15, 19, 27], [20,, 22, 26]]);
         })
+    }, {
+        key: 'extract',
+        value: function extract() {
+            return _Object$assign({}, _get(Object.getPrototypeOf(Model.prototype), 'extract', this).call(this), { URLList: this.URLList });
+        }
     }]);
 
     return Model;
@@ -9844,7 +9805,7 @@ var Model = (function (_BaseModel) {
 exports['default'] = Model;
 module.exports = exports['default'];
 
-},{"../Document/Model":80,"../base/Model":82,"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/create-class":13,"babel-runtime/helpers/get":15,"babel-runtime/helpers/inherits":16,"babel-runtime/helpers/interop-require-default":17,"babel-runtime/regenerator":65}],82:[function(require,module,exports){
+},{"../Document/Model":77,"../base/Model":79,"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/assign":4,"babel-runtime/core-js/object/define-property":6,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12,"babel-runtime/helpers/get":14,"babel-runtime/helpers/inherits":15,"babel-runtime/helpers/interop-require-default":16,"babel-runtime/regenerator":62}],79:[function(require,module,exports){
 'use strict';
 
 var _createClass = require('babel-runtime/helpers/create-class')['default'];
@@ -9882,6 +9843,11 @@ var Model = (function () {
         value: function eq(model) {
             return this.id === model.getId();
         }
+    }, {
+        key: 'extract',
+        value: function extract() {
+            return { id: this.id };
+        }
     }]);
 
     return Model;
@@ -9890,4 +9856,4 @@ var Model = (function () {
 exports['default'] = Model;
 module.exports = exports['default'];
 
-},{"UUID":2,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":12,"babel-runtime/helpers/create-class":13,"babel-runtime/helpers/interop-require-default":17}]},{},[1]);
+},{"UUID":2,"babel-runtime/core-js/object/define-property":6,"babel-runtime/helpers/class-call-check":11,"babel-runtime/helpers/create-class":12,"babel-runtime/helpers/interop-require-default":16}]},{},[1]);
