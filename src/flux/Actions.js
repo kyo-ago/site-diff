@@ -1,27 +1,44 @@
 import {Action} from 'material-flux';
-import { storage as StorageAPI } from 'chrome-extension-api-promise';
 
 export const keys = {
     'result': 'result',
     'doRender': 'doRender'
 };
 export default class Actions extends Action {
-    constructor(context) {
+    constructor({
+        context,
+        storageAPI,
+        captureRepository,
+        urlSetRepository
+    }) {
         super(context);
-        this.storageAPI = new StorageAPI();
+        this.storageAPI = storageAPI;
+        this.captureRepository = captureRepository;
+        this.urlSetRepository = urlSetRepository;
     }
     result({message}) {
         this.dispatch(keys.result, message);
     }
+    async reatoreModels() {
+        let oldCaps = await this.storageAPI.getLocal(undefined);
+        let capturePromises = await this.captureRepository.restore(oldCaps);
+        let urlSetPromises = await this.urlSetRepository.restore(oldCaps);
+        return [capturePromises, urlSetPromises];
+    }
     async doRender({message}) {
         console.assert(message['type'] === 'resultsMessage');
-        console.assert(Array.isArray(message['data']));
-        let oldCaps = await this.storageAPI.getLocal(undefined);
-        let urls = Object.keys(oldCaps).reduce((base, key) => {
-            let cap = oldCaps[key];
-            base[cap['url']] = cap;
+        let [captureModels, urlSetModels] = await this.reatoreModels();
+        let sortedCaptureModels = captureModels.sort((a, b) => a.captureTime - b.captureTime);
+        let urls = sortedCaptureModels.reduce((base, key) => {
+            let cap = sortedCaptureModels[key];
+            if (base[cap['url']]) {
+                base[cap['url']].push(cap);
+            } else {
+                base[cap['url']] = [cap];
+            }
             return base;
         }, {});
+        console.log(urls);
         this.dispatch(keys.doRender, {
             models: message['data'],
             urls

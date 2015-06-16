@@ -1,9 +1,9 @@
 import './global';
-import Filer from 'filer.js';
 import CaptureVisibleTab from 'chrome-tab-capture-visible-tab-full';
 import { tabs as TabAPI, storage as StorageAPI } from 'chrome-extension-api-promise';
 
 import URLSetModel from './models/URLSet/Model';
+import URLSetRepository from './models/URLSet/Repository';
 import CaptureRepository from './models/Capture/Repository';
 
 let InnerResultPath = 'html/capture_result.html';
@@ -15,11 +15,10 @@ let InnerResultPath = 'html/capture_result.html';
         'overWriteDevicePixelRatio': 1
     });
 
-    let filer = new Filer();
-    await filer.init();
-
-    let captureRepository = new CaptureRepository({
-        filer,
+    let captureRepository = await CaptureRepository.factory({
+        storageAPI
+    });
+    let urlSetRepository = new URLSetRepository({
         storageAPI
     });
 
@@ -30,6 +29,9 @@ let InnerResultPath = 'html/capture_result.html';
         let tab = await tabAPI.createActive();
 
         let urlSetModel = new URLSetModel({ URLList: urls });
+        await urlSetRepository.save({
+            model: urlSetModel
+        });
         let captureModelIds = [];
         for (let doc of urlSetModel.loadURLList()) {
             let captureModel = await doc.capture({

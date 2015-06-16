@@ -1,6 +1,6 @@
 import BaseModel from '../base/Model';
 
-export default class Model extends BaseModel {
+class CaptureModel extends BaseModel {
     constructor({ id, url, blob, captureTime = new Date() }) {
         super(id);
         this.url = url;
@@ -8,9 +8,16 @@ export default class Model extends BaseModel {
         this.captureTime = 'string' === typeof captureTime ? new Date(captureTime) : captureTime;
     }
     extract() {
-        return Object.assign({}, super.extract(), {
-            url: this.url,
-            captureTime: this.captureTime + ''
-        });
+        return Object.assign(
+            {},
+            super.extract(),
+            {
+                ClassName: CaptureModel.ClassName,
+                url: this.url,
+                captureTime: this.captureTime + ''
+            }
+        );
     }
 }
+CaptureModel.ClassName = 'CaptureModel';
+export default CaptureModel;

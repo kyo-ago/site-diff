@@ -1,7 +1,7 @@
 import BaseModel from '../base/Model';
 import DocumentModel from '../Document/Model';
 
-export default class Model extends BaseModel {
+class URLSetModel extends BaseModel {
     constructor({ id, URLList }) {
         super(id);
         this.URLList = URLList;
@@ -13,6 +13,15 @@ export default class Model extends BaseModel {
         }
     }
     extract() {
-        return Object.assign({}, super.extract(), { URLList: this.URLList });
+        return Object.assign(
+            {},
+            super.extract(),
+            {
+                ClassName: Model.ClassName,
+                URLList: this.URLList
+            }
+        );
     }
 }
+URLSetModel.ClassName = 'URLSetModel';
+export default URLSetModel;
