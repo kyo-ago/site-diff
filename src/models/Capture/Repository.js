@@ -24,8 +24,9 @@ export default class CaptureRepository {
         );
     }
     async get({ id }) {
-        let file = await filer.open(id);
-        let data = await this.storageAPI.getLocal(id);
+        let file = await this.filer.open(id);
+        let data_ = await this.storageAPI.getLocal(id);
+        let data = data_[id];
         console.assert(Model.ClassName === data.ClassName);
         return new Model({
             id,

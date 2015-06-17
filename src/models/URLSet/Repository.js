@@ -14,7 +14,8 @@ export default class Repository {
         );
     }
     async get({ id }) {
-        let data = await this.storageAPI.getLocal(id);
+        let data_ = await this.storageAPI.getLocal(id);
+        let data = data_[id];
         console.assert(Model.ClassName === data.ClassName);
         return new Model({
             id,

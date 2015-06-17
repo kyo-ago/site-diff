@@ -29,8 +29,7 @@ export default class Actions extends Action {
         console.assert(message['type'] === 'resultsMessage');
         let [captureModels, urlSetModels] = await this.reatoreModels();
         let sortedCaptureModels = captureModels.sort((a, b) => a.captureTime - b.captureTime);
-        let urls = sortedCaptureModels.reduce((base, key) => {
-            let cap = sortedCaptureModels[key];
+        let urls = sortedCaptureModels.reduce((base, cap) => {
             if (base[cap['url']]) {
                 base[cap['url']].push(cap);
             } else {
@@ -38,7 +37,6 @@ export default class Actions extends Action {
             }
             return base;
         }, {});
-        console.log(urls);
         this.dispatch(keys.doRender, {
             models: message['data'],
             urls

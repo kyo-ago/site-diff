@@ -49,7 +49,7 @@ var onMessageHandler = function onMessageHandler(message, sender, sendResponse) 
 
 chrome.runtime.onMessage.addListener(onMessageHandler);
 
-var message = { 'type': 'doRender', 'data': { 'type': 'resultsMessage', 'data': { 'urlSetModel': { 'id': '3251d9cb-04c2-419e-8e64-ac7efd9304a7', 'URLList': ['http://localhost:8000/'] }, 'captureModelIds': ['ef84dbcd-5dbc-4ec4-a5c9-c55f3770ff9a'] } } };
+var message = { 'type': 'doRender', 'data': { 'type': 'resultsMessage', 'data': { 'urlSetModelId': '7897ed24-6615-4b02-af51-041a58871c4c', 'captureModelIds': ['74ac849e-b03d-4888-9f84-4c60ec1bc2c6'] } } };
 onMessageHandler(message, {}, function () {
     console.log(_arguments);
 });
@@ -30633,8 +30633,7 @@ var Actions = (function (_Action) {
                         sortedCaptureModels = captureModels.sort(function (a, b) {
                             return a.captureTime - b.captureTime;
                         });
-                        urls = sortedCaptureModels.reduce(function (base, key) {
-                            var cap = sortedCaptureModels[key];
+                        urls = sortedCaptureModels.reduce(function (base, cap) {
                             if (base[cap['url']]) {
                                 base[cap['url']].push(cap);
                             } else {
@@ -30643,13 +30642,12 @@ var Actions = (function (_Action) {
                             return base;
                         }, {});
 
-                        console.log(urls);
                         this.dispatch(keys.doRender, {
                             models: message['data'],
                             urls: urls
                         });
 
-                    case 11:
+                    case 10:
                     case 'end':
                         return context$2$0.stop();
                 }
@@ -31339,12 +31337,12 @@ var CaptureRepository = (function () {
         key: 'get',
         value: function get(_ref2) {
             var id = _ref2.id;
-            var file, data;
+            var file, data_, data;
             return _regeneratorRuntime.async(function get$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return _regeneratorRuntime.awrap(filer.open(id));
+                        return _regeneratorRuntime.awrap(this.filer.open(id));
 
                     case 2:
                         file = context$2$0.sent;
@@ -31352,7 +31350,8 @@ var CaptureRepository = (function () {
                         return _regeneratorRuntime.awrap(this.storageAPI.getLocal(id));
 
                     case 5:
-                        data = context$2$0.sent;
+                        data_ = context$2$0.sent;
+                        data = data_[id];
 
                         console.assert(_Model2['default'].ClassName === data.ClassName);
                         return context$2$0.abrupt('return', new _Model2['default']({
@@ -31362,7 +31361,7 @@ var CaptureRepository = (function () {
                             captureTime: data['captureTime']
                         }));
 
-                    case 8:
+                    case 9:
                     case 'end':
                         return context$2$0.stop();
                 }
@@ -31705,7 +31704,7 @@ var Repository = (function () {
         key: 'get',
         value: function get(_ref2) {
             var id = _ref2.id;
-            var data;
+            var data_, data;
             return _regeneratorRuntime.async(function get$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
@@ -31713,7 +31712,8 @@ var Repository = (function () {
                         return _regeneratorRuntime.awrap(this.storageAPI.getLocal(id));
 
                     case 2:
-                        data = context$2$0.sent;
+                        data_ = context$2$0.sent;
+                        data = data_[id];
 
                         console.assert(_Model2['default'].ClassName === data.ClassName);
                         return context$2$0.abrupt('return', new _Model2['default']({
@@ -31721,7 +31721,7 @@ var Repository = (function () {
                             URLList: data['URLList']
                         }));
 
-                    case 5:
+                    case 6:
                     case 'end':
                         return context$2$0.stop();
                 }
