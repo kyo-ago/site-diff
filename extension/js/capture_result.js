@@ -49,7 +49,7 @@ var onMessageHandler = function onMessageHandler(message, sender, sendResponse) 
 
 chrome.runtime.onMessage.addListener(onMessageHandler);
 
-var message = { 'type': 'doRender', 'data': { 'type': 'resultsMessage', 'data': { 'urlSetModelId': '7897ed24-6615-4b02-af51-041a58871c4c', 'captureModelIds': ['74ac849e-b03d-4888-9f84-4c60ec1bc2c6'] } } };
+var message = { 'type': 'doRender', 'data': { 'type': 'resultsMessage', 'data': { 'urlSetModelId': '93f9dc66-7779-49d2-b79f-75edeb210a42', 'captureModelIds': ['dc63b5e9-59a9-4f6c-bb14-af32cec87384'] } } };
 onMessageHandler(message, {}, function () {
     console.log(_arguments);
 });
@@ -30545,6 +30545,8 @@ var _Object$defineProperty = require('babel-runtime/core-js/object/define-proper
 
 var _regeneratorRuntime = require('babel-runtime/regenerator')['default'];
 
+var _Promise = require('babel-runtime/core-js/promise')['default'];
+
 _Object$defineProperty(exports, '__esModule', {
     value: true
 });
@@ -30582,10 +30584,10 @@ var Actions = (function (_Action) {
             this.dispatch(keys.result, message);
         }
     }, {
-        key: 'reatoreModels',
-        value: function reatoreModels() {
-            var oldCaps, capturePromises, urlSetPromises;
-            return _regeneratorRuntime.async(function reatoreModels$(context$2$0) {
+        key: 'reatoreAllModels',
+        value: function reatoreAllModels() {
+            var oldCaps, captureModels, urlSetModels;
+            return _regeneratorRuntime.async(function reatoreAllModels$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
@@ -30597,15 +30599,44 @@ var Actions = (function (_Action) {
                         return _regeneratorRuntime.awrap(this.captureRepository.restore(oldCaps));
 
                     case 5:
-                        capturePromises = context$2$0.sent;
+                        captureModels = context$2$0.sent;
                         context$2$0.next = 8;
                         return _regeneratorRuntime.awrap(this.urlSetRepository.restore(oldCaps));
 
                     case 8:
-                        urlSetPromises = context$2$0.sent;
-                        return context$2$0.abrupt('return', [capturePromises, urlSetPromises]);
+                        urlSetModels = context$2$0.sent;
+                        return context$2$0.abrupt('return', [captureModels, urlSetModels]);
 
                     case 10:
+                    case 'end':
+                        return context$2$0.stop();
+                }
+            }, null, this);
+        }
+    }, {
+        key: 'getMessageModels',
+        value: function getMessageModels(message) {
+            var captureModels, urlSetModel;
+            return _regeneratorRuntime.async(function getMessageModels$(context$2$0) {
+                var _this = this;
+
+                while (1) switch (context$2$0.prev = context$2$0.next) {
+                    case 0:
+                        context$2$0.next = 2;
+                        return _regeneratorRuntime.awrap(_Promise.all(message['captureModelIds'].map(function (id) {
+                            return _this.captureRepository.get({ id: id });
+                        })));
+
+                    case 2:
+                        captureModels = context$2$0.sent;
+                        context$2$0.next = 5;
+                        return _regeneratorRuntime.awrap(this.urlSetRepository.get({ id: message['urlSetModelId'] }));
+
+                    case 5:
+                        urlSetModel = context$2$0.sent;
+                        return context$2$0.abrupt('return', [captureModels, urlSetModel]);
+
+                    case 7:
                     case 'end':
                         return context$2$0.stop();
                 }
@@ -30616,24 +30647,32 @@ var Actions = (function (_Action) {
         value: function doRender(_ref3) {
             var message = _ref3.message;
 
-            var _ref4, _ref42, captureModels, urlSetModels, sortedCaptureModels, urls;
+            var messageData, _ref4, _ref42, allCaptureModels, _ref5, _ref52, captureModels, urlSetModel, sortedAllCaptureModels, urls;
 
             return _regeneratorRuntime.async(function doRender$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         console.assert(message['type'] === 'resultsMessage');
-                        context$2$0.next = 3;
-                        return _regeneratorRuntime.awrap(this.reatoreModels());
+                        messageData = message['data'];
+                        context$2$0.next = 4;
+                        return _regeneratorRuntime.awrap(this.reatoreAllModels());
 
-                    case 3:
+                    case 4:
                         _ref4 = context$2$0.sent;
-                        _ref42 = _slicedToArray(_ref4, 2);
-                        captureModels = _ref42[0];
-                        urlSetModels = _ref42[1];
-                        sortedCaptureModels = captureModels.sort(function (a, b) {
+                        _ref42 = _slicedToArray(_ref4, 1);
+                        allCaptureModels = _ref42[0];
+                        context$2$0.next = 9;
+                        return _regeneratorRuntime.awrap(this.getMessageModels(messageData));
+
+                    case 9:
+                        _ref5 = context$2$0.sent;
+                        _ref52 = _slicedToArray(_ref5, 2);
+                        captureModels = _ref52[0];
+                        urlSetModel = _ref52[1];
+                        sortedAllCaptureModels = allCaptureModels.sort(function (a, b) {
                             return a.captureTime - b.captureTime;
                         });
-                        urls = sortedCaptureModels.reduce(function (base, cap) {
+                        urls = sortedAllCaptureModels.reduce(function (base, cap) {
                             if (base[cap['url']]) {
                                 base[cap['url']].push(cap);
                             } else {
@@ -30643,11 +30682,13 @@ var Actions = (function (_Action) {
                         }, {});
 
                         this.dispatch(keys.doRender, {
-                            models: message['data'],
-                            urls: urls
+                            allModels: sortedAllCaptureModels,
+                            allUrls: urls,
+                            currentUrls: urlSetModel,
+                            currentModels: captureModels
                         });
 
-                    case 10:
+                    case 16:
                     case 'end':
                         return context$2$0.stop();
                 }
@@ -30660,7 +30701,7 @@ var Actions = (function (_Action) {
 
 exports['default'] = Actions;
 
-},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/sliced-to-array":19,"babel-runtime/regenerator":67,"material-flux":81}],246:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/sliced-to-array":19,"babel-runtime/regenerator":67,"material-flux":81}],246:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -30833,8 +30874,7 @@ var Main = (function (_React$Component) {
         _get(Object.getPrototypeOf(Main.prototype), 'constructor', this).call(this, props);
         this.renderStore = this.props.context.store.render;
         this.state = {
-            models: this.renderStore.getModels(),
-            urls: this.renderStore.getUrls()
+            param: this.renderStore.getParam()
         };
     }
 
@@ -30844,8 +30884,7 @@ var Main = (function (_React$Component) {
         key: '_onChange',
         value: function _onChange() {
             this.setState({
-                models: this.renderStore.getModels(),
-                urls: this.renderStore.getUrls()
+                param: this.renderStore.getParam()
             });
         }
     }, {
@@ -30922,8 +30961,7 @@ var Result = (function (_React$Component) {
         _get(Object.getPrototypeOf(Result.prototype), "constructor", this).call(this, props);
         this.renderStore = this.props.context.store.render;
         this.state = {
-            models: this.renderStore.getModels(),
-            urls: this.renderStore.getUrls()
+            param: this.renderStore.getParam()
         };
     }
 
@@ -30933,8 +30971,7 @@ var Result = (function (_React$Component) {
         key: "_onChange",
         value: function _onChange() {
             this.setState({
-                models: this.renderStore.getModels(),
-                urls: this.renderStore.getUrls()
+                param: this.renderStore.getParam()
             });
         }
     }, {
@@ -30950,7 +30987,7 @@ var Result = (function (_React$Component) {
     }, {
         key: "render",
         value: function render() {
-            var items = this.state.models.map(function (_ref) {
+            var items = (this.state.param.allModels || []).map(function (_ref) {
                 var fileUrl = _ref.fileUrl;
                 return _react2["default"].createElement("img", { key: fileUrl, src: fileUrl });
             });
@@ -31000,7 +31037,7 @@ var Urls = (function (_React$Component) {
         _get(Object.getPrototypeOf(Urls.prototype), "constructor", this).call(this, props);
         this.renderStore = this.props.context.store.render;
         this.state = {
-            urls: this.renderStore.getUrls()
+            param: this.renderStore.getParam()
         };
     }
 
@@ -31010,7 +31047,7 @@ var Urls = (function (_React$Component) {
         key: "_onChange",
         value: function _onChange() {
             this.setState({
-                urls: this.renderStore.getUrls()
+                param: this.renderStore.getParam()
             });
         }
     }, {
@@ -31033,7 +31070,7 @@ var Urls = (function (_React$Component) {
         value: function render() {
             var _this = this;
 
-            var urls = _Object$keys(this.state.urls).map(function (url) {
+            var urls = _Object$keys(this.state.param.allUrls || {}).map(function (url) {
                 return _react2["default"].createElement(
                     "li",
                     { key: url },
@@ -31090,8 +31127,7 @@ var Render = (function (_Store) {
         _get(Object.getPrototypeOf(Render.prototype), 'constructor', this).call(this, context);
         this.register(_Actions.keys.doRender, this.onHandler);
         this.state = {
-            models: [],
-            urls: {}
+            param: {}
         };
     }
 
@@ -31099,21 +31135,13 @@ var Render = (function (_Store) {
 
     _createClass(Render, [{
         key: 'onHandler',
-        value: function onHandler(_ref) {
-            var models = _ref.models;
-            var urls = _ref.urls;
-
-            this.setState({ models: models, urls: urls });
+        value: function onHandler(param) {
+            this.setState({ param: param });
         }
     }, {
-        key: 'getModels',
-        value: function getModels() {
-            return this.state.models;
-        }
-    }, {
-        key: 'getUrls',
-        value: function getUrls() {
-            return this.state.urls;
+        key: 'getParam',
+        value: function getParam() {
+            return this.state.param;
         }
     }]);
 
@@ -31635,7 +31663,7 @@ var URLSetModel = (function (_BaseModel) {
         key: 'extract',
         value: function extract() {
             return _Object$assign({}, _get(Object.getPrototypeOf(URLSetModel.prototype), 'extract', this).call(this), {
-                ClassName: Model.ClassName,
+                ClassName: URLSetModel.ClassName,
                 URLList: this.URLList
             });
         }

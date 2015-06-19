@@ -36,7 +36,7 @@ let onMessageHandler = (message, sender, sendResponse) => {
 
 chrome.runtime.onMessage.addListener(onMessageHandler);
 
-let message = {"type":"doRender","data":{"type":"resultsMessage","data":{"urlSetModelId":"7897ed24-6615-4b02-af51-041a58871c4c","captureModelIds":["74ac849e-b03d-4888-9f84-4c60ec1bc2c6"]}}};
+let message = {"type":"doRender","data":{"type":"resultsMessage","data":{"urlSetModelId":"93f9dc66-7779-49d2-b79f-75edeb210a42","captureModelIds":["dc63b5e9-59a9-4f6c-bb14-af32cec87384"]}}};
 onMessageHandler(message, {}, () => {
     console.log(arguments);
 });

@@ -5,13 +5,13 @@ export default class Urls extends React.Component {
         super(props);
         this.renderStore = this.props.context.store.render;
         this.state = {
-            urls: this.renderStore.getUrls()
+            param: this.renderStore.getParam()
         };
     }
 
     _onChange() {
         this.setState({
-            urls: this.renderStore.getUrls()
+            param: this.renderStore.getParam()
         });
     }
 
@@ -28,7 +28,7 @@ export default class Urls extends React.Component {
     }
 
     render() {
-        let urls = Object.keys(this.state.urls).map((url) => <li key={url}><a onClick={this.onClick.bind(this, url)} href="#">{url}</a></li>);
+        let urls = Object.keys(this.state.param.allUrls || {}).map((url) => <li key={url}><a onClick={this.onClick.bind(this, url)} href="#">{url}</a></li>);
         return (
             <div className="UrlList">
                 <ul>

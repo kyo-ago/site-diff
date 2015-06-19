@@ -6,17 +6,13 @@ export default class Render extends Store {
         super(context);
         this.register(keys.doRender, this.onHandler);
         this.state = {
-            models: [],
-            urls: {}
+            param: {}
         };
     }
-    onHandler({models, urls}) {
-        this.setState({models, urls});
+    onHandler(param) {
+        this.setState({param});
     }
-    getModels() {
-        return this.state.models;
-    }
-    getUrls() {
-        return this.state.urls;
+    getParam() {
+        return this.state.param;
     }
 }

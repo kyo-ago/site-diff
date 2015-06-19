@@ -5,15 +5,13 @@ export default class Result extends React.Component {
         super(props);
         this.renderStore = this.props.context.store.render;
         this.state = {
-            models: this.renderStore.getModels(),
-            urls: this.renderStore.getUrls()
+            param: this.renderStore.getParam()
         };
     }
 
     _onChange() {
         this.setState({
-            models: this.renderStore.getModels(),
-            urls: this.renderStore.getUrls()
+            param: this.renderStore.getParam()
         });
     }
 
@@ -26,7 +24,7 @@ export default class Result extends React.Component {
     }
 
     render() {
-        let items = this.state.models.map(({fileUrl}) => <img key={fileUrl} src={fileUrl} />);
+        let items = (this.state.param.allModels || []).map(({fileUrl}) => <img key={fileUrl} src={fileUrl} />);
         return (
             <div className="ResultCapture">
                 {items}

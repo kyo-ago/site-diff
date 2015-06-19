@@ -19,17 +19,26 @@ export default class Actions extends Action {
     result({message}) {
         this.dispatch(keys.result, message);
     }
-    async reatoreModels() {
+    async reatoreAllModels() {
         let oldCaps = await this.storageAPI.getLocal(undefined);
-        let capturePromises = await this.captureRepository.restore(oldCaps);
-        let urlSetPromises = await this.urlSetRepository.restore(oldCaps);
-        return [capturePromises, urlSetPromises];
+        let captureModels = await this.captureRepository.restore(oldCaps);
+        let urlSetModels = await this.urlSetRepository.restore(oldCaps);
+        return [captureModels, urlSetModels];
+    }
+    async getMessageModels(message) {
+        let captureModels = await Promise.all(message['captureModelIds'].map((id) => {
+            return this.captureRepository.get({id});
+        }));
+        let urlSetModel = await this.urlSetRepository.get({ id: message['urlSetModelId']});
+        return [captureModels, urlSetModel];
     }
     async doRender({message}) {
         console.assert(message['type'] === 'resultsMessage');
-        let [captureModels, urlSetModels] = await this.reatoreModels();
-        let sortedCaptureModels = captureModels.sort((a, b) => a.captureTime - b.captureTime);
-        let urls = sortedCaptureModels.reduce((base, cap) => {
+        let messageData = message['data'];
+        let [allCaptureModels] = await this.reatoreAllModels();
+        let [captureModels, urlSetModel] = await this.getMessageModels(messageData);
+        let sortedAllCaptureModels = allCaptureModels.sort((a, b) => a.captureTime - b.captureTime);
+        let urls = sortedAllCaptureModels.reduce((base, cap) => {
             if (base[cap['url']]) {
                 base[cap['url']].push(cap);
             } else {
@@ -37,9 +46,12 @@ export default class Actions extends Action {
             }
             return base;
         }, {});
+
         this.dispatch(keys.doRender, {
-            models: message['data'],
-            urls
+            allModels: sortedAllCaptureModels,
+            allUrls: urls,
+            currentUrls: urlSetModel,
+            currentModels: captureModels
         });
     }
 }

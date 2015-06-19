@@ -9563,12 +9563,12 @@ var CaptureRepository = (function () {
         key: 'get',
         value: function get(_ref2) {
             var id = _ref2.id;
-            var file, data;
+            var file, data_, data;
             return _regeneratorRuntime.async(function get$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
                         context$2$0.next = 2;
-                        return _regeneratorRuntime.awrap(filer.open(id));
+                        return _regeneratorRuntime.awrap(this.filer.open(id));
 
                     case 2:
                         file = context$2$0.sent;
@@ -9576,7 +9576,8 @@ var CaptureRepository = (function () {
                         return _regeneratorRuntime.awrap(this.storageAPI.getLocal(id));
 
                     case 5:
-                        data = context$2$0.sent;
+                        data_ = context$2$0.sent;
+                        data = data_[id];
 
                         console.assert(_Model2['default'].ClassName === data.ClassName);
                         return context$2$0.abrupt('return', new _Model2['default']({
@@ -9586,7 +9587,7 @@ var CaptureRepository = (function () {
                             captureTime: data['captureTime']
                         }));
 
-                    case 8:
+                    case 9:
                     case 'end':
                         return context$2$0.stop();
                 }
@@ -9860,7 +9861,7 @@ var URLSetModel = (function (_BaseModel) {
         key: 'extract',
         value: function extract() {
             return _Object$assign({}, _get(Object.getPrototypeOf(URLSetModel.prototype), 'extract', this).call(this), {
-                ClassName: Model.ClassName,
+                ClassName: URLSetModel.ClassName,
                 URLList: this.URLList
             });
         }
@@ -9929,7 +9930,7 @@ var Repository = (function () {
         key: 'get',
         value: function get(_ref2) {
             var id = _ref2.id;
-            var data;
+            var data_, data;
             return _regeneratorRuntime.async(function get$(context$2$0) {
                 while (1) switch (context$2$0.prev = context$2$0.next) {
                     case 0:
@@ -9937,7 +9938,8 @@ var Repository = (function () {
                         return _regeneratorRuntime.awrap(this.storageAPI.getLocal(id));
 
                     case 2:
-                        data = context$2$0.sent;
+                        data_ = context$2$0.sent;
+                        data = data_[id];
 
                         console.assert(_Model2['default'].ClassName === data.ClassName);
                         return context$2$0.abrupt('return', new _Model2['default']({
@@ -9945,7 +9947,7 @@ var Repository = (function () {
                             URLList: data['URLList']
                         }));
 
-                    case 5:
+                    case 6:
                     case 'end':
                         return context$2$0.stop();
                 }

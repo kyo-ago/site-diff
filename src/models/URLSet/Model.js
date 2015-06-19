@@ -17,7 +17,7 @@ class URLSetModel extends BaseModel {
             {},
             super.extract(),
             {
-                ClassName: Model.ClassName,
+                ClassName: URLSetModel.ClassName,
                 URLList: this.URLList
             }
         );
