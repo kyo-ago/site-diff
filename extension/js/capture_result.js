@@ -15,14 +15,14 @@ var _fluxContext = require('./flux/Context');
 
 var _fluxContext2 = _interopRequireDefault(_fluxContext);
 
-var _fluxComponentsMain = require('./flux/components/Main');
+var _fluxMain = require('./flux/Main');
 
-var _fluxComponentsMain2 = _interopRequireDefault(_fluxComponentsMain);
+var _fluxMain2 = _interopRequireDefault(_fluxMain);
 
 var context = undefined;
 var contextPromise = _fluxContext2['default'].factory().then(function (res) {
     context = res;
-    _react2['default'].render(_react2['default'].createElement(_fluxComponentsMain2['default'], { context: context }), document.getElementById('content'));
+    _react2['default'].render(_react2['default'].createElement(_fluxMain2['default'], { context: context }), document.getElementById('content'));
     return context;
 });
 var onMessageHandler = function onMessageHandler(message, sender, sendResponse) {
@@ -49,12 +49,12 @@ var onMessageHandler = function onMessageHandler(message, sender, sendResponse) 
 
 chrome.runtime.onMessage.addListener(onMessageHandler);
 
-var message = { 'type': 'doRender', 'data': { 'type': 'resultsMessage', 'data': { 'urlSetModelId': '93f9dc66-7779-49d2-b79f-75edeb210a42', 'captureModelIds': ['dc63b5e9-59a9-4f6c-bb14-af32cec87384'] } } };
+var message = { 'type': 'doRender', 'data': { 'type': 'resultsMessage', 'data': { 'urlSetModelId': '40f002ed-e7f2-4eb1-8035-b424f68cf17a', 'captureModelIds': ['e70f7467-6dc7-4d58-9bb2-995e72c7a8a9'] } } };
 onMessageHandler(message, {}, function () {
     console.log(_arguments);
 });
 
-},{"./flux/Context":246,"./flux/components/Main":247,"./global":252,"babel-runtime/helpers/interop-require-default":18,"react":244}],2:[function(require,module,exports){
+},{"./flux/Context":246,"./flux/Main":247,"./global":253,"babel-runtime/helpers/interop-require-default":18,"react":244}],2:[function(require,module,exports){
 /*
  Version: core-1.0
  The MIT License: Copyright (c) 2012 LiosK.
@@ -30682,6 +30682,7 @@ var Actions = (function (_Action) {
                         }, {});
 
                         this.dispatch(keys.doRender, {
+                            'page': 'result',
                             allModels: sortedAllCaptureModels,
                             allUrls: urls,
                             currentUrls: urlSetModel,
@@ -30836,7 +30837,7 @@ var FluxContext = (function (_Context) {
 exports['default'] = FluxContext;
 module.exports = exports['default'];
 
-},{"../models/Capture/Repository":254,"../models/URLSet/Repository":257,"./Actions":245,"./stores/Render":250,"./stores/Result":251,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67,"chrome-extension-api-promise":76,"material-flux":81}],247:[function(require,module,exports){
+},{"../models/Capture/Repository":255,"../models/URLSet/Repository":258,"./Actions":245,"./stores/Render":251,"./stores/Result":252,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67,"chrome-extension-api-promise":76,"material-flux":81}],247:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -30859,13 +30860,9 @@ var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Result = require('./Result');
+var _pagesResult = require('./pages/Result');
 
-var _Result2 = _interopRequireDefault(_Result);
-
-var _Urls = require('./Urls');
-
-var _Urls2 = _interopRequireDefault(_Urls);
+var _pagesResult2 = _interopRequireDefault(_pagesResult);
 
 var Main = (function (_React$Component) {
     function Main(props) {
@@ -30908,20 +30905,10 @@ var Main = (function (_React$Component) {
         value: function render() {
             var context = this.props.context;
 
-            return _react2['default'].createElement(
-                'div',
-                null,
-                _react2['default'].createElement(
-                    'div',
-                    null,
-                    _react2['default'].createElement(_Urls2['default'], { context: context })
-                ),
-                _react2['default'].createElement(
-                    'div',
-                    null,
-                    _react2['default'].createElement(_Result2['default'], { context: context })
-                )
-            );
+            var param = this.state.param || {};
+            if (!param.page || param.page === 'result') {
+                return _react2['default'].createElement(_pagesResult2['default'], { context: context });
+            }
         }
     }]);
 
@@ -30931,7 +30918,75 @@ var Main = (function (_React$Component) {
 exports['default'] = Main;
 module.exports = exports['default'];
 
-},{"./Result":248,"./Urls":249,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"react":244}],248:[function(require,module,exports){
+},{"./pages/Result":248,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"react":244}],248:[function(require,module,exports){
+'use strict';
+
+var _inherits = require('babel-runtime/helpers/inherits')['default'];
+
+var _createClass = require('babel-runtime/helpers/create-class')['default'];
+
+var _classCallCheck = require('babel-runtime/helpers/class-call-check')['default'];
+
+var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
+
+var _interopRequireDefault = require('babel-runtime/helpers/interop-require-default')['default'];
+
+_Object$defineProperty(exports, '__esModule', {
+    value: true
+});
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _componentsResult = require('./components/Result');
+
+var _componentsResult2 = _interopRequireDefault(_componentsResult);
+
+var _componentsUrls = require('./components/Urls');
+
+var _componentsUrls2 = _interopRequireDefault(_componentsUrls);
+
+var ResultComponent = (function (_React$Component) {
+    function ResultComponent() {
+        _classCallCheck(this, ResultComponent);
+
+        if (_React$Component != null) {
+            _React$Component.apply(this, arguments);
+        }
+    }
+
+    _inherits(ResultComponent, _React$Component);
+
+    _createClass(ResultComponent, [{
+        key: 'render',
+        value: function render() {
+            var context = this.props.context;
+
+            return _react2['default'].createElement(
+                'div',
+                null,
+                _react2['default'].createElement(
+                    'div',
+                    null,
+                    _react2['default'].createElement(_componentsUrls2['default'], { context: context })
+                ),
+                _react2['default'].createElement(
+                    'div',
+                    null,
+                    _react2['default'].createElement(_componentsResult2['default'], { context: context })
+                )
+            );
+        }
+    }]);
+
+    return ResultComponent;
+})(_react2['default'].Component);
+
+exports['default'] = ResultComponent;
+module.exports = exports['default'];
+
+},{"./components/Result":249,"./components/Urls":250,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"react":244}],249:[function(require,module,exports){
 "use strict";
 
 var _inherits = require("babel-runtime/helpers/inherits")["default"];
@@ -31005,7 +31060,7 @@ var Result = (function (_React$Component) {
 exports["default"] = Result;
 module.exports = exports["default"];
 
-},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"react":244}],249:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"react":244}],250:[function(require,module,exports){
 "use strict";
 
 var _inherits = require("babel-runtime/helpers/inherits")["default"];
@@ -31099,7 +31154,7 @@ var Urls = (function (_React$Component) {
 exports["default"] = Urls;
 module.exports = exports["default"];
 
-},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/object/keys":9,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"react":244}],250:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/object/keys":9,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"react":244}],251:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -31151,7 +31206,7 @@ var Render = (function (_Store) {
 exports['default'] = Render;
 module.exports = exports['default'];
 
-},{"../Actions":245,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"material-flux":81}],251:[function(require,module,exports){
+},{"../Actions":245,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"material-flux":81}],252:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -31203,7 +31258,7 @@ var Result = (function (_Store) {
 exports['default'] = Result;
 module.exports = exports['default'];
 
-},{"../Actions":245,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"material-flux":81}],252:[function(require,module,exports){
+},{"../Actions":245,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"material-flux":81}],253:[function(require,module,exports){
 'use strict';
 
 var _Object$defineProperty = require('babel-runtime/core-js/object/define-property')['default'];
@@ -31242,7 +31297,7 @@ if (!HTMLCanvasElement.prototype.toBlob) {
     });
 }
 
-},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/interop-require-default":18,"bluebird":69,"global":80,"monapt":89}],253:[function(require,module,exports){
+},{"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/interop-require-default":18,"bluebird":69,"global":80,"monapt":89}],254:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -31303,7 +31358,7 @@ CaptureModel.ClassName = 'CaptureModel';
 exports['default'] = CaptureModel;
 module.exports = exports['default'];
 
-},{"../base/Model":258,"babel-runtime/core-js/object/assign":5,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18}],254:[function(require,module,exports){
+},{"../base/Model":259,"babel-runtime/core-js/object/assign":5,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18}],255:[function(require,module,exports){
 'use strict';
 
 var _createClass = require('babel-runtime/helpers/create-class')['default'];
@@ -31451,7 +31506,7 @@ var CaptureRepository = (function () {
 exports['default'] = CaptureRepository;
 module.exports = exports['default'];
 
-},{"./Model":253,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/object/keys":9,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/define-property":15,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67,"filer.js":79}],255:[function(require,module,exports){
+},{"./Model":254,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/object/keys":9,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/define-property":15,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67,"filer.js":79}],256:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -31543,7 +31598,7 @@ var Model = (function (_BaseModel) {
 exports['default'] = Model;
 module.exports = exports['default'];
 
-},{"../Capture/Model":253,"../base/Model":258,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67}],256:[function(require,module,exports){
+},{"../Capture/Model":254,"../base/Model":259,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67}],257:[function(require,module,exports){
 'use strict';
 
 var _inherits = require('babel-runtime/helpers/inherits')['default'];
@@ -31676,7 +31731,7 @@ URLSetModel.ClassName = 'URLSetModel';
 exports['default'] = URLSetModel;
 module.exports = exports['default'];
 
-},{"../Document/Model":255,"../base/Model":258,"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/assign":5,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67}],257:[function(require,module,exports){
+},{"../Document/Model":256,"../base/Model":259,"babel-runtime/core-js/get-iterator":3,"babel-runtime/core-js/object/assign":5,"babel-runtime/core-js/object/define-property":7,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/get":16,"babel-runtime/helpers/inherits":17,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67}],258:[function(require,module,exports){
 'use strict';
 
 var _createClass = require('babel-runtime/helpers/create-class')['default'];
@@ -31779,7 +31834,7 @@ var Repository = (function () {
 exports['default'] = Repository;
 module.exports = exports['default'];
 
-},{"./Model":256,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/object/keys":9,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/define-property":15,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67}],258:[function(require,module,exports){
+},{"./Model":257,"babel-runtime/core-js/object/define-property":7,"babel-runtime/core-js/object/keys":9,"babel-runtime/core-js/promise":10,"babel-runtime/helpers/class-call-check":13,"babel-runtime/helpers/create-class":14,"babel-runtime/helpers/define-property":15,"babel-runtime/helpers/interop-require-default":18,"babel-runtime/regenerator":67}],259:[function(require,module,exports){
 'use strict';
 
 var _createClass = require('babel-runtime/helpers/create-class')['default'];

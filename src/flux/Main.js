@@ -1,6 +1,5 @@
 import React from 'react';
-import Result from './Result';
-import Urls from './Urls';
+import ResultPage from './pages/Result';
 
 export default class Main extends React.Component {
     constructor(props) {
@@ -32,15 +31,11 @@ export default class Main extends React.Component {
 
     render() {
         var { context } = this.props;
-        return (
-            <div>
-                <div>
-                    <Urls context={context} />
-                </div>
-                <div>
-                    <Result context={context} />
-                </div>
-            </div>
-        );
+        var param = this.state.param || {};
+        if (!param.page || param.page === 'result') {
+            return (
+                <ResultPage context={context} />
+            );
+        }
     }
 }

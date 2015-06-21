@@ -48,6 +48,7 @@ export default class Actions extends Action {
         }, {});
 
         this.dispatch(keys.doRender, {
+            'page': 'result',
             allModels: sortedAllCaptureModels,
             allUrls: urls,
             currentUrls: urlSetModel,

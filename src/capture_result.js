@@ -1,7 +1,7 @@
 import './global';
 import React from 'react';
 import Context from './flux/Context';
-import MainComponents from './flux/components/Main';
+import MainComponents from './flux/Main';
 
 let context;
 let contextPromise = Context.factory().then((res) => {
@@ -36,7 +36,7 @@ let onMessageHandler = (message, sender, sendResponse) => {
 
 chrome.runtime.onMessage.addListener(onMessageHandler);
 
-let message = {"type":"doRender","data":{"type":"resultsMessage","data":{"urlSetModelId":"93f9dc66-7779-49d2-b79f-75edeb210a42","captureModelIds":["dc63b5e9-59a9-4f6c-bb14-af32cec87384"]}}};
+let message = {"type":"doRender","data":{"type":"resultsMessage","data":{"urlSetModelId":"40f002ed-e7f2-4eb1-8035-b424f68cf17a","captureModelIds":["e70f7467-6dc7-4d58-9bb2-995e72c7a8a9"]}}};
 onMessageHandler(message, {}, () => {
     console.log(arguments);
 });
